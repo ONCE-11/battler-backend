@@ -1,0 +1,2 @@
+id,created_at,attack_item_id,defense_item_id,accessory_item_id,consumable_id,attack,defense,max_health,current_health,user_id,ability_1_id,ability_2_id,ability_3_id
+13523cd6-d133-4d4c-a3dd-52c8f4aaf892,2024-02-15 18:32:10.069939+00,,,,,10,10,100,100,5fd43b76-fa14-4a4b-99b5-c6fdd009cc65,,,

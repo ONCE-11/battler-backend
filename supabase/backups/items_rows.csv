@@ -1,10 +1,12 @@
 id,created_at,name,description,metadata,item_type,price
-98e5b34a-52a9-49c8-ae9a-8e91dab73037,2024-02-13 22:11:03.711338+00,plantain,Delicious and useful,"{""health"":""25""}",consumable,
-94b79342-845e-47a0-be2c-360f1ad0185a,2024-02-13 22:11:52.220582+00,sword,Meh but effective,"{""attack"":1.2}",attack,
-d2f56d5f-0675-448b-8324-ddc9e5a012fe,2024-02-13 22:09:55.031385+00,knife,Small but deadly,"{""health"":1.1}",attack,
-88dc6232-37eb-4000-97d3-535276c7c7da,2024-02-13 22:15:16.559371+00,sunny d,Is this really orange juice?,"{""health"":10}",consumable,
-ec19ad96-30a3-40d9-a728-ef938e6112d1,2024-02-13 22:17:54.400043+00,coquito,Tasty and just in time,"{""health"":15}",consumable,
-7e17bc77-5e05-473f-ba68-5f808d7fa288,2024-02-13 22:18:52.31151+00,chicken,Bukaaaaw!,"{""attack"":1.2,""health"":20}",consumable,
-3317f6ba-d4c9-4a82-bf3f-cd0a820c92d4,2024-02-13 22:20:28.824506+00,chancleta,Mom's most effective weapon,"{""attack"":3}",attack,
-481105bd-b463-4256-8906-d1bc02ce8691,2024-02-13 22:21:09.839082+00,shield,A standard shield,"{""defense"":1.5}",defense,
-62eeb47c-d017-42e8-9a55-37ae692ad185,2024-02-13 22:22:11.472921+00,hoodie,Comfortable and stylish,"{""defense"":1.2,""stealth"":100}",defense,
+98e5b34a-52a9-49c8-ae9a-8e91dab73037,2024-02-13 22:11:03.711338+00,plantain,Delicious and useful,"{""health"":""25""}",consumable,100
+e65a83d6-3bd0-49e4-9462-ed1d7f15d974,2024-02-14 00:52:34.556005+00,wic check,Sometimes the government helps,"{""coins"":15}",consumable,100
+c7e40f48-41c0-4843-8ece-584ea185a87e,2024-02-14 00:51:25.584581+00,stimmy,Make America great again,"{""coins"":10}",consumable,100
+62eeb47c-d017-42e8-9a55-37ae692ad185,2024-02-13 22:22:11.472921+00,hoodie,Comfortable and stylish,"{""defense"":1.2,""stealth"":100}",defense,100
+481105bd-b463-4256-8906-d1bc02ce8691,2024-02-13 22:21:09.839082+00,shield,A standard shield,"{""defense"":1.5}",defense,100
+3317f6ba-d4c9-4a82-bf3f-cd0a820c92d4,2024-02-13 22:20:28.824506+00,chancleta,Mom's most effective weapon,"{""attack"":3}",attack,100
+7e17bc77-5e05-473f-ba68-5f808d7fa288,2024-02-13 22:18:52.31151+00,chicken,Bukaaaaw!,"{""attack"":1.2,""health"":20}",consumable,100
+ec19ad96-30a3-40d9-a728-ef938e6112d1,2024-02-13 22:17:54.400043+00,coquito,Tasty and just in time,"{""health"":15}",consumable,100
+88dc6232-37eb-4000-97d3-535276c7c7da,2024-02-13 22:15:16.559371+00,sunny d,Is this really orange juice?,"{""health"":10}",consumable,100
+d2f56d5f-0675-448b-8324-ddc9e5a012fe,2024-02-13 22:09:55.031385+00,knife,Small but deadly,"{""health"":1.1}",attack,100
+94b79342-845e-47a0-be2c-360f1ad0185a,2024-02-13 22:11:52.220582+00,sword,Meh but effective,"{""attack"":1.2}",attack,100
