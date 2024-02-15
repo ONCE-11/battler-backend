@@ -1,8 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { generateSupabaseClient } from "../_shared/supabase.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// import { supabase } from "../../../src/utilities.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.6";
+import { Database } from "../_shared/supabase.ts";
 
 Deno.serve(async (req) => {
   // This is needed if you're planning to invoke your function from a browser.
@@ -13,83 +11,70 @@ Deno.serve(async (req) => {
   try {
     const { userId, itemId } = await req.json();
 
-    // const request = new Request("https://pokeapi.co/api/v2/pokemon/ditto", {
-    //   method: "GET",
-    //   // body: JSON.stringify({
-    //   //   message: "Hello world!",
-    //   // }),
-    //   // headers: {
-    //   //   "content-type": "application/json",
-    //   // },
-    // });
-
-    // const response = await fetch("http://127.0.0.1:54321/rest/v1/profiles", {
-    //   headers: {
-    //     accept: "application/json",
-    //   },
-    // });
-
-    // const body = await response.json();
-
-    // console.log({ body });
-
-    // return new Response(JSON.stringify(body), {
-    //   headers: { ...corsHeaders, "Content-Type": "application/json" },
-    //   status: 200,
-    // });
-
-    console.log({
-      url: Deno.env.get("SUPABASE_URL"),
-      key: Deno.env.get("SUPABASE_ANON_KEY"),
-    });
-    // console.log({ userId, itemId });
-    // console.log({ Authorization: req.headers.get("Authorization") });
-
-    const supabase = createClient(
+    const supabase = createClient<Database>(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
-        },
-      }
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      // TODO: switch SUPABASE_ANON_KEY here (only for initial work)
+      // {
+      //   global: {
+      //     headers: { Authorization: req.headers.get("Authorization")! },
+      //   },
+      // }
     );
 
-    // console.log(supabase);
+    // load our most current data
+    const { data: itemsData, error: itemsError } = await supabase
+      .from("items")
+      .select()
+      .eq("id", itemId)
+      .single();
 
-    const response = await supabase.from("abilities").select("*");
-    // const profilesResponse = await supabase.from("profiles").select();
-    // .eq("user_id", userId)
-    // .single();
-
-    // const itemsResponse = await supabase.from("items").select();
-    // .eq("id", itemId)
-    // .single();
-
-    // console.log({ response });
-
-    if (response.error) {
-      console.error(response.error);
-      throw response.error;
+    if (itemsError) {
+      throw itemsError;
     }
 
-    // if (profilesResponse.error) {
-    //   console.error(profilesResponse.error);
-    //   throw profilesResponse.error;
-    // }
+    const { data: profilesData, error: profilesError } = await supabase
+      .from("profiles")
+      .select()
+      .eq("user_id", userId)
+      .single();
 
-    // const { error } = await supabase
-    //   .from("profiles")
-    //   .update({ pesos: pesos - 100 })
-    //   .eq("user_id", currentUser.id);
+    if (profilesError) {
+      throw profilesError;
+    }
 
-    // console.log({ error });
+    // check to see if character has enough pesos
+    const remainingPesos = profilesData.pesos - itemsData.price;
 
-    const data = {
-      message: `Hellorrrr!`,
-    };
+    if (remainingPesos >= 0) {
+      remainingPesos;
 
-    return new Response(JSON.stringify(response.data), {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          pesos: remainingPesos,
+        })
+        .eq("user_id", userId);
+
+      if (error) throw error;
+    } else {
+      throw Error("Character does not have enough pesos");
+    }
+
+    const { error: inventoryUpdateError } = await supabase
+      .from("inventories")
+      .insert([
+        {
+          item_id: itemId,
+          character_id: "13523cd6-d133-4d4c-a3dd-52c8f4aaf892",
+        },
+      ]);
+
+    if (inventoryUpdateError) throw inventoryUpdateError;
+
+    const data = {};
+
+    return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
