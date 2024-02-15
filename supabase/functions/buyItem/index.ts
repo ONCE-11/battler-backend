@@ -29,22 +29,26 @@ Deno.serve(async (req) => {
       .eq("id", itemId)
       .single();
 
-    if (itemsError) {
-      throw itemsError;
-    }
+    if (itemsError) throw itemsError;
 
-    const { data: profilesData, error: profilesError } = await supabase
+    const { data: characterData, error: characterError } = await supabase
+      .from("characters")
+      .select()
+      .eq("user_id", userId)
+      .single();
+
+    if (characterError) throw characterError;
+
+    const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select()
       .eq("user_id", userId)
       .single();
 
-    if (profilesError) {
-      throw profilesError;
-    }
+    if (profileError) throw profileError;
 
     // check to see if character has enough pesos
-    const remainingPesos = profilesData.pesos - itemsData.price;
+    const remainingPesos = profileData.pesos - itemsData.price;
 
     if (remainingPesos >= 0) {
       remainingPesos;
@@ -66,7 +70,7 @@ Deno.serve(async (req) => {
       .insert([
         {
           item_id: itemId,
-          character_id: "13523cd6-d133-4d4c-a3dd-52c8f4aaf892",
+          character_id: characterData.id,
         },
       ]);
 
