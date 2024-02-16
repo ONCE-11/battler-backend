@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { userId, itemId } = await req.json();
+    const { characterId, userId, itemId } = await req.json();
 
     const supabase = createClient<Database>(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -25,19 +25,11 @@ Deno.serve(async (req) => {
     // load our most current data
     const { data: itemsData, error: itemsError } = await supabase
       .from("items")
-      .select()
+      .select("price")
       .eq("id", itemId)
       .single();
 
     if (itemsError) throw itemsError;
-
-    const { data: characterData, error: characterError } = await supabase
-      .from("characters")
-      .select()
-      .eq("user_id", userId)
-      .single();
-
-    if (characterError) throw characterError;
 
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
@@ -70,7 +62,7 @@ Deno.serve(async (req) => {
       .insert([
         {
           item_id: itemId,
-          character_id: characterData.id,
+          character_id: characterId,
         },
       ]);
 
