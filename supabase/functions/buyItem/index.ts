@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
 
     if (inventoryUpdateError) throw inventoryUpdateError;
 
-    const data = {};
+    const data = { remainingPesos };
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
