@@ -12,7 +12,7 @@ const generateRandomValueAndRemove = (
   abilities: Database["public"]["Tables"]["abilities"]["Row"][]
 ) => {
   const randomIndex = generateRandomValue(0, abilities.length - 1);
-  const randomValue = abilities[randomIndex].id;
+  const randomValue = abilities[randomIndex];
   abilities.splice(randomIndex, 1);
 
   return randomValue;
@@ -25,44 +25,81 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { user_id } = await req.json();
+    const { userId } = await req.json();
     const supabase = generateSupabaseClient();
 
     const [
-      { data: characters, error: characterSelectError },
+      { count: charactersCount, error: charactersCountError },
       { data: abilities, error: abilitiesError },
+      { data: avatars, error: avatarsError },
     ] = await Promise.all([
-      supabase.from("characters").select().eq("alive", true),
+      supabase
+        .from("characters")
+        .select("*", { count: "exact", head: true })
+        .eq("alive", true)
+        .eq("user_id", userId),
       supabase.from("abilities").select(),
+      supabase.storage.from("avatars").list(),
     ]);
 
-    if (characterSelectError) throw characterSelectError;
+    if (charactersCountError) throw charactersCountError;
     if (abilitiesError) throw abilitiesError;
+    if (avatarsError) throw avatarsError;
 
-    if (characters!.length > 0)
+    if (charactersCount! > 0)
       throw Error("You cannot have more than one character alive");
 
     const health = generateRandomValue(75, 125);
+    const avatarUrlIndex = generateRandomValue(0, avatars!.length - 1);
+    const {
+      data: { publicUrl: avatarUrl },
+    } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(avatars![avatarUrlIndex].name);
 
-    const { error: characterInsertError } = await supabase
+    const ability1 = generateRandomValueAndRemove(abilities!);
+    const ability2 = generateRandomValueAndRemove(abilities!);
+    const ability3 = generateRandomValueAndRemove(abilities!);
+
+    const { data: newCharacterData, error: characterInsertError } = await supabase
       .from("characters")
       .insert({
         attack: generateRandomValue(1, 10),
         defense: generateRandomValue(1, 10),
         max_health: health,
         current_health: health,
-        user_id,
-        ability_1_id: generateRandomValueAndRemove(abilities!),
-        ability_2_id: generateRandomValueAndRemove(abilities!),
-        ability_3_id: generateRandomValueAndRemove(abilities!),
-      });
+        user_id: userId,
+        ability_1_id: ability1.id,
+        ability_2_id: ability2.id,
+        ability_3_id: ability3.id,
+        // on development SUPABASE_URL is set to http://kong:8000 which is the url to talk to docker
+        avatar_url:
+          Deno.env.get("DENO_ENV") == "development"
+            ? avatarUrl.replace(
+                Deno.env.get("SUPABASE_URL")!,
+                Deno.env.get("LOCAL_BUCKET_URL")!
+              )
+            : avatarUrl,
+      })
+      .select("id, attack, defense, max_health, current_health, avatar_url, created_at")
+      .single();
 
     if (characterInsertError) throw characterInsertError;
 
-    return new Response(JSON.stringify({ data: "Character created" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({
+        character: {
+          ...newCharacterData,
+          ability_1: ability1,
+          ability_2: ability2,
+          ability_3: ability3,
+        },
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 201,
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
