@@ -61,45 +61,53 @@ Deno.serve(async (req) => {
     const ability2 = generateRandomValueAndRemove(abilities!);
     const ability3 = generateRandomValueAndRemove(abilities!);
 
-    const { data: newCharacterData, error: characterInsertError } = await supabase
-      .from("characters")
-      .insert({
-        attack: generateRandomValue(1, 10),
-        defense: generateRandomValue(1, 10),
-        max_health: health,
-        current_health: health,
-        user_id: userId,
-        ability_1_id: ability1.id,
-        ability_2_id: ability2.id,
-        ability_3_id: ability3.id,
-        // on development SUPABASE_URL is set to http://kong:8000 which is the url to talk to docker
-        avatar_url:
-          Deno.env.get("DENO_ENV") == "development"
-            ? avatarUrl.replace(
-                Deno.env.get("SUPABASE_URL")!,
-                Deno.env.get("LOCAL_BUCKET_URL")!
-              )
-            : avatarUrl,
-      })
-      .select("id, attack, defense, max_health, current_health, avatar_url, created_at")
-      .single();
+    const { data: newCharacterData, error: characterInsertError } =
+      await supabase
+        .from("characters")
+        .insert({
+          attack: generateRandomValue(1, 10),
+          defense: generateRandomValue(1, 10),
+          max_health: health,
+          current_health: health,
+          user_id: userId,
+          ability_1_id: ability1.id,
+          ability_2_id: ability2.id,
+          ability_3_id: ability3.id,
+          // on development SUPABASE_URL is set to http://kong:8000 which is the url to talk to docker
+          avatar_url:
+            Deno.env.get("DENO_ENV") == "development"
+              ? avatarUrl.replace(
+                  Deno.env.get("SUPABASE_URL")!,
+                  Deno.env.get("LOCAL_BUCKET_URL")!
+                )
+              : avatarUrl,
+        })
+        .select(
+          "id, attack, defense, max_health, current_health, avatar_url, created_at"
+        )
+        .single();
 
     if (characterInsertError) throw characterInsertError;
 
-    return new Response(
-      JSON.stringify({
-        character: {
-          ...newCharacterData,
-          ability_1: ability1,
-          ability_2: ability2,
-          ability_3: ability3,
-        },
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 201,
-      }
-    );
+    const response = {
+      id: newCharacterData.id,
+      attack: newCharacterData.attack,
+      defense: newCharacterData.defense,
+      maxHealth: newCharacterData.max_health,
+      currentHealth: newCharacterData.current_health,
+      avatarUrl: newCharacterData.avatar_url,
+      createdAt: newCharacterData.created_at,
+      ability1,
+      ability2,
+      ability3,
+    };
+
+    console.log(response);
+
+    return new Response(JSON.stringify(response), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 201,
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
