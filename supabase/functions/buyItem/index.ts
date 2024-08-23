@@ -1,5 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.6";
+import { createClient } from "supabase";
 import { Database } from "../_shared/supabaseTypes.ts";
 
 Deno.serve(async (req) => {
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
 
     const supabase = createClient<Database>(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       // TODO: switch to SUPABASE_ANON_KEY here (only for initial work)
       // {
       //   global: {
@@ -44,8 +44,9 @@ Deno.serve(async (req) => {
     // check to see if character has enough pesos
     const remainingPesos = profileData!.pesos - itemsData!.price;
 
-    if (remainingPesos < 0)
+    if (remainingPesos < 0) {
       throw Error(`Character ${characterId} does not have enough pesos`);
+    }
 
     const [{ error: profileUpdateError }, { error: inventoryUpdateError }] =
       await Promise.all([
