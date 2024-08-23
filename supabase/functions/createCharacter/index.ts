@@ -1,5 +1,8 @@
-import { corsHeaders } from "../_shared/cors.ts";
-import { generateSupabaseClient } from "../_shared/supabaseClient.ts";
+import {
+  functionResponse,
+  generateSupabaseClient,
+  preflightResponse,
+} from "../_shared/utils.ts";
 import { Database } from "../_shared/supabaseTypes.ts";
 
 const generateRandomValue = (min: number, max: number) => {
@@ -19,9 +22,8 @@ const generateRandomValueAndRemove = (
 };
 
 Deno.serve(async (req) => {
-  // This is needed if you're planning to invoke your function from a browser.
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return preflightResponse();
   }
 
   try {
@@ -89,7 +91,7 @@ Deno.serve(async (req) => {
 
     if (characterInsertError) throw characterInsertError;
 
-    const response = {
+    return functionResponse({
       id: newCharacterData.id,
       attack: newCharacterData.attack,
       defense: newCharacterData.defense,
@@ -100,18 +102,8 @@ Deno.serve(async (req) => {
       ability1,
       ability2,
       ability3,
-    };
-
-    console.log(response);
-
-    return new Response(JSON.stringify(response), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 201,
-    });
+    }, 201);
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
-    });
+    return functionResponse({ error: error.message }, 500);
   }
 });

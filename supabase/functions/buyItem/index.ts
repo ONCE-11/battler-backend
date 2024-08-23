@@ -1,26 +1,18 @@
-import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "supabase";
-import { Database } from "../_shared/supabaseTypes.ts";
+import {
+  functionResponse,
+  generateSupabaseClient,
+  preflightResponse,
+} from "../_shared/utils.ts";
 
 Deno.serve(async (req) => {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return preflightResponse();
   }
 
   try {
     const { characterId, userId, itemId } = await req.json();
-
-    const supabase = createClient<Database>(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      // TODO: switch to SUPABASE_ANON_KEY here (only for initial work)
-      // {
-      //   global: {
-      //     headers: { Authorization: req.headers.get("Authorization")! },
-      //   },
-      // }
-    );
+    const supabase = generateSupabaseClient();
 
     // load our most current data
     const [
@@ -67,14 +59,8 @@ Deno.serve(async (req) => {
     if (profileUpdateError) throw profileUpdateError;
     if (inventoryUpdateError) throw inventoryUpdateError;
 
-    return new Response(JSON.stringify({ remainingPesos }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return functionResponse({ remainingPesos }, 200);
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
-    });
+    return functionResponse({ error: error.message }, 500);
   }
 });
