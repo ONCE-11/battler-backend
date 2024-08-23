@@ -92,8 +92,12 @@ Deno.serve(async (req) => {
     });
 
     if (ability.metadata.attack) {
-      opponentProxy.current_health = opponent.current_health -
-        Math.round(player.attack * ability.metadata.attack);
+      // health should not exceed max health
+      opponentProxy.current_health = Math.max(
+        0,
+        opponent.current_health -
+          Math.round(player.attack * ability.metadata.attack),
+      );
 
       // console.log(
       //   "currentHealth",
@@ -102,6 +106,7 @@ Deno.serve(async (req) => {
     }
 
     if (ability.metadata.health) {
+      // health should not be less than 0
       playerProxy.current_health = Math.min(
         player.max_health,
         player.current_health +
