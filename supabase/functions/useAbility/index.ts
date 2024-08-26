@@ -9,6 +9,7 @@ interface ReqParams {
   abilityNumber: 1 | 2 | 3;
   playerId: string;
   opponentId: string;
+  fightId: string;
 }
 
 interface AbilityMetadata {
@@ -120,6 +121,24 @@ Deno.serve(async (req) => {
     }
 
     if (playerChanged) {
+      const playerAlive = player.current_health > 0;
+
+      if (!playerAlive) {
+        console.log("player dead");
+        const { error: fightsUpdateError } = await supabase
+          .from("fights").update(
+            {
+              game_over: true,
+              winner: "2",
+            },
+          ).eq(
+            "id",
+            reqParams.fightId,
+          );
+
+        if (fightsUpdateError) throw fightsUpdateError;
+      }
+
       const { error: playerUpdateError } = await supabase
         .from("characters").update(
           {
@@ -127,6 +146,7 @@ Deno.serve(async (req) => {
             defense: player.defense,
             current_health: player.current_health,
             max_health: player.max_health,
+            alive: playerAlive,
           },
         ).eq(
           "id",
@@ -137,6 +157,26 @@ Deno.serve(async (req) => {
     }
 
     if (opponentChanged) {
+      const opponentAlive = opponent.current_health > 0;
+
+      console.log("opponent changed", opponentAlive);
+
+      if (!opponentAlive) {
+        console.log("opponent dead");
+        const { error: fightsUpdateError } = await supabase
+          .from("fights").update(
+            {
+              game_over: true,
+              winner: "1",
+            },
+          ).eq(
+            "id",
+            reqParams.fightId,
+          );
+
+        if (fightsUpdateError) throw fightsUpdateError;
+      }
+
       const { error: opponentUpdateError } = await supabase
         .from("characters").update(
           {
@@ -144,6 +184,7 @@ Deno.serve(async (req) => {
             defense: opponent.defense,
             current_health: opponent.current_health,
             max_health: opponent.max_health,
+            alive: opponentAlive,
           },
         ).eq(
           "id",
