@@ -5,20 +5,26 @@ import {
 } from "../_shared/utils.ts";
 import { Tables } from "../_shared/supabaseTypes.ts";
 
-interface ReqParams {
+type ReqParams = {
   abilityNumber: 1 | 2 | 3;
   playerId: string;
   opponentId: string;
   fightId: string;
-}
+};
 
-interface AbilityMetadata {
+type AbilityMetadata = {
   metadata: {
     attack?: number;
     defense?: number;
     health?: number;
   };
-}
+};
+
+type FightUpdateFields = {
+  game_over: Tables<"fights">["game_over"];
+  turn: Tables<"fights">["turn"];
+  winner?: Tables<"fights">["winner"];
+};
 
 type CharactersWithAbilites = {
   id: Tables<"characters">["id"];
@@ -59,17 +65,25 @@ Deno.serve(async (req) => {
       reqParams.opponentId,
     ).returns<CharactersWithAbilites[]>().single();
 
+    const fightQuery = supabase.from("fights").select("*").eq(
+      "id",
+      reqParams.fightId,
+    ).returns<Tables<"fights">[]>().single();
+
     const [
       { data: player, error: playerError },
       { data: opponent, error: opponentError },
+      { data: fight, error: fightsError },
     ] = await Promise
       .all([
         playerCharacterQuery,
         opponentCharacterQuery,
+        fightQuery,
       ]);
 
     if (playerError) throw playerError;
     if (opponentError) throw opponentError;
+    if (fightsError) throw fightsError;
 
     const ability = player[`ability${reqParams.abilityNumber}`];
     let playerChanged = false;
@@ -120,23 +134,16 @@ Deno.serve(async (req) => {
       // );
     }
 
+    let gameOver = false;
+    let winner: Tables<"fights">["winner"];
+
     if (playerChanged) {
-      const playerAlive = player.current_health > 0;
+      let playerAlive = true;
 
-      if (!playerAlive) {
-        console.log("player dead");
-        const { error: fightsUpdateError } = await supabase
-          .from("fights").update(
-            {
-              game_over: true,
-              winner: "2",
-            },
-          ).eq(
-            "id",
-            reqParams.fightId,
-          );
-
-        if (fightsUpdateError) throw fightsUpdateError;
+      if (player.current_health === 0) {
+        playerAlive = false;
+        winner = "2";
+        gameOver = true;
       }
 
       const { error: playerUpdateError } = await supabase
@@ -157,24 +164,12 @@ Deno.serve(async (req) => {
     }
 
     if (opponentChanged) {
-      const opponentAlive = opponent.current_health > 0;
+      let opponentAlive = true;
 
-      console.log("opponent changed", opponentAlive);
-
-      if (!opponentAlive) {
-        console.log("opponent dead");
-        const { error: fightsUpdateError } = await supabase
-          .from("fights").update(
-            {
-              game_over: true,
-              winner: "1",
-            },
-          ).eq(
-            "id",
-            reqParams.fightId,
-          );
-
-        if (fightsUpdateError) throw fightsUpdateError;
+      if (opponent.current_health === 0) {
+        opponentAlive = false;
+        winner = "1";
+        gameOver = true;
       }
 
       const { error: opponentUpdateError } = await supabase
@@ -193,6 +188,26 @@ Deno.serve(async (req) => {
 
       if (opponentUpdateError) throw opponentUpdateError;
     }
+
+    const fightUpdatefields: FightUpdateFields = {
+      game_over: gameOver,
+      turn: fight.turn + 1,
+    };
+
+    // this code is weird, probably need to change this
+    if (winner!) {
+      fightUpdatefields.winner = winner;
+    }
+
+    const { error: fightsUpdateError } = await supabase
+      .from("fights").update(
+        fightUpdatefields,
+      ).eq(
+        "id",
+        reqParams.fightId,
+      );
+
+    if (fightsUpdateError) throw fightsUpdateError;
 
     return functionResponse({ successful: true }, 200);
   } catch (error) {
