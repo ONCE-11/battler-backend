@@ -75,6 +75,7 @@ export type Database = {
           defense_item_id: string | null;
           id: string;
           max_health: number;
+          name: string;
           user_id: string;
         };
         Insert: {
@@ -93,6 +94,7 @@ export type Database = {
           defense_item_id?: string | null;
           id?: string;
           max_health: number;
+          name?: string;
           user_id: string;
         };
         Update: {
@@ -111,6 +113,7 @@ export type Database = {
           defense_item_id?: string | null;
           id?: string;
           max_health?: number;
+          name?: string;
           user_id?: string;
         };
         Relationships: [
