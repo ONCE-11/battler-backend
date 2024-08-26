@@ -178,21 +178,27 @@ export type Database = {
       fights: {
         Row: {
           created_at: string;
+          game_over: boolean;
           id: string;
           player1_id: string;
           player2_id: string;
+          winner: Database["public"]["Enums"]["player_slot"] | null;
         };
         Insert: {
           created_at?: string;
+          game_over?: boolean;
           id?: string;
           player1_id: string;
           player2_id: string;
+          winner?: Database["public"]["Enums"]["player_slot"] | null;
         };
         Update: {
           created_at?: string;
+          game_over?: boolean;
           id?: string;
           player1_id?: string;
           player2_id?: string;
+          winner?: Database["public"]["Enums"]["player_slot"] | null;
         };
         Relationships: [
           {
@@ -321,6 +327,7 @@ export type Database = {
     };
     Enums: {
       item_type: "attack" | "defense" | "accessory" | "consumable";
+      player_slot: "1" | "2";
     };
     CompositeTypes: {
       [_ in never]: never;
