@@ -4,6 +4,9 @@ import {
   preflightResponse,
 } from "../_shared/utils.ts";
 import { Database } from "../_shared/supabaseTypes.ts";
+import { SupabaseAuthClient } from "https://esm.sh/v135/@supabase/supabase-js@2.39.6/dist/module/lib/SupabaseAuthClient.js";
+
+const supabase = generateSupabaseClient();
 
 const generateRandomValue = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -21,13 +24,13 @@ const generateRandomValueAndRemove = (
   return randomValue;
 };
 
-const generateCharacterNameFromFilename = (filename: string): string => {
-  const lowercaseName = filename.replace(/\.(jpg|png|jpeg)/, "").replaceAll(
-    /[_-]/g,
-    " ",
-  );
+const generateCharacterName = async (): Promise<string> => {
+  const { data: names, error } = await supabase.from("names").select("*");
+  if (error) throw error;
 
-  return lowercaseName[0].toUpperCase() + lowercaseName.slice(1);
+  const { prefix, suffix } = names[generateRandomValue(0, names.length - 1)];
+
+  return `${prefix} ${suffix}`;
 };
 
 Deno.serve(async (req) => {
@@ -37,7 +40,7 @@ Deno.serve(async (req) => {
 
   try {
     const { userId } = await req.json();
-    const supabase = generateSupabaseClient();
+    // const supabase = generateSupabaseClient();
 
     const [
       { count: charactersCount, error: charactersCountError },
@@ -93,10 +96,11 @@ Deno.serve(async (req) => {
               Deno.env.get("LOCAL_BUCKET_URL")!,
             )
             : avatarUrl,
-          name: generateCharacterNameFromFilename(avatarFilename),
+          // name: generateCharacterNameFromFilename(avatarFilename),
+          name: await generateCharacterName(),
         })
         .select(
-          "id, attack, defense, max_health, current_health, avatar_url, created_at",
+          "*",
         )
         .single();
 
@@ -110,6 +114,7 @@ Deno.serve(async (req) => {
       currentHealth: newCharacterData.current_health,
       avatarUrl: newCharacterData.avatar_url,
       createdAt: newCharacterData.created_at,
+      name: newCharacterData.name,
       ability1,
       ability2,
       ability3,

@@ -286,6 +286,27 @@ export type Database = {
         }
         Relationships: []
       }
+      names: {
+        Row: {
+          created_at: string
+          id: number
+          prefix: string
+          suffix: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          prefix: string
+          suffix?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          prefix?: string
+          suffix?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
