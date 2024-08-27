@@ -4,7 +4,6 @@ import {
   preflightResponse,
 } from "../_shared/utils.ts";
 import { Database } from "../_shared/supabaseTypes.ts";
-import { SupabaseAuthClient } from "https://esm.sh/v135/@supabase/supabase-js@2.39.6/dist/module/lib/SupabaseAuthClient.js";
 
 const supabase = generateSupabaseClient();
 
