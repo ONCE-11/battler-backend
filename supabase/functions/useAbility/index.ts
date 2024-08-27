@@ -37,6 +37,13 @@ type CharactersWithAbilites = {
   ability3: Tables<"abilities"> & AbilityMetadata;
 };
 
+const calculateWinner = (
+  attacker: Tables<"characters">,
+  fight: Tables<"fights">,
+): "1" | "2" => {
+  return attacker.id === fight.player1_id ? "1" : "2";
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return preflightResponse();
@@ -142,7 +149,8 @@ Deno.serve(async (req) => {
 
       if (player.current_health === 0) {
         playerAlive = false;
-        winner = "2";
+        // winner = "2";
+        winner = opponent.id === fight.player1_id ? "1" : "2";
         gameOver = true;
       }
 
@@ -168,7 +176,8 @@ Deno.serve(async (req) => {
 
       if (opponent.current_health === 0) {
         opponentAlive = false;
-        winner = "1";
+        // winner = "1";
+        winner = player.id === fight.player1_id ? "1" : "2";
         gameOver = true;
       }
 
