@@ -21,6 +21,15 @@ const generateRandomValueAndRemove = (
   return randomValue;
 };
 
+const generateCharacterNameFromFilename = (filename: string): string => {
+  const lowercaseName = filename.replace(/\.(jpg|png|jpeg)/, "").replaceAll(
+    /[_-]/g,
+    " ",
+  );
+
+  return lowercaseName[0].toUpperCase() + lowercaseName.slice(1);
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return preflightResponse();
@@ -53,12 +62,13 @@ Deno.serve(async (req) => {
     }
 
     const health = generateRandomValue(75, 125);
-    const avatarUrlIndex = generateRandomValue(0, avatars!.length - 1);
+    const avatarUrlIndex = generateRandomValue(0, avatars.length - 1);
+    const avatarFilename = avatars[avatarUrlIndex].name;
     const {
       data: { publicUrl: avatarUrl },
     } = supabase.storage
       .from("avatars")
-      .getPublicUrl(avatars![avatarUrlIndex].name);
+      .getPublicUrl(avatarFilename);
 
     const ability1 = generateRandomValueAndRemove(abilities!);
     const ability2 = generateRandomValueAndRemove(abilities!);
@@ -83,6 +93,7 @@ Deno.serve(async (req) => {
               Deno.env.get("LOCAL_BUCKET_URL")!,
             )
             : avatarUrl,
+          name: generateCharacterNameFromFilename(avatarFilename),
         })
         .select(
           "id, attack, defense, max_health, current_health, avatar_url, created_at",
