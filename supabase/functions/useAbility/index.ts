@@ -200,6 +200,19 @@ Deno.serve(async (req) => {
 
     if (fightsUpdateError) throw fightsUpdateError;
 
+    const { error: actionsInsertError } = await supabase.from("actions").insert(
+      {
+        initiator: player.id,
+        type: "ability",
+        metadata: {
+          initiator: player,
+          receiver: opponent,
+        },
+      },
+    );
+
+    if (actionsInsertError) throw actionsInsertError;
+
     return functionResponse({ successful: true }, 200);
   } catch (error) {
     console.error(error);
