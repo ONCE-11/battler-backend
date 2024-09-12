@@ -52,14 +52,14 @@ Deno.serve(async (req) => {
     const supabase = generateSupabaseClient();
 
     const playerCharacterQuery = supabase.from("characters").select(
-      "id, attack, defense, current_health, max_health, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
+      "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
       reqParams.playerId,
     ).returns<CharactersWithAbilites[]>().single();
 
     const opponentCharacterQuery = supabase.from("characters").select(
-      "id, attack, defense, current_health, max_health, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
+      "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
       reqParams.opponentId,
