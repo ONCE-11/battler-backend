@@ -105,6 +105,7 @@ export type Database = {
           current_health: number
           defense: number
           defense_item_id: string | null
+          fighting: boolean
           id: string
           max_health: number
           name: string
@@ -124,6 +125,7 @@ export type Database = {
           current_health: number
           defense: number
           defense_item_id?: string | null
+          fighting?: boolean
           id?: string
           max_health: number
           name?: string
@@ -143,6 +145,7 @@ export type Database = {
           current_health?: number
           defense?: number
           defense_item_id?: string | null
+          fighting?: boolean
           id?: string
           max_health?: number
           name?: string
