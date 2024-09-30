@@ -105,7 +105,6 @@ export type Database = {
           current_health: number
           defense: number
           defense_item_id: string | null
-          fighting: boolean
           id: string
           max_health: number
           name: string
@@ -125,7 +124,6 @@ export type Database = {
           current_health: number
           defense: number
           defense_item_id?: string | null
-          fighting?: boolean
           id?: string
           max_health: number
           name?: string
@@ -145,7 +143,6 @@ export type Database = {
           current_health?: number
           defense?: number
           defense_item_id?: string | null
-          fighting?: boolean
           id?: string
           max_health?: number
           name?: string
@@ -394,7 +391,15 @@ export type Database = {
           character_id: string
           opponent_id: string
         }
-        Returns: undefined
+        Returns: {
+          created_at: string
+          game_over: boolean
+          id: string
+          player1_id: string
+          player2_id: string
+          turn: number
+          winner: string | null
+        }[]
       }
     }
     Enums: {
@@ -479,6 +484,7 @@ export type Database = {
           owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          user_metadata: Json | null
           version: string | null
         }
         Insert: {
@@ -492,6 +498,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Update: {
@@ -505,6 +512,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Relationships: [
@@ -526,6 +534,7 @@ export type Database = {
           key: string
           owner_id: string | null
           upload_signature: string
+          user_metadata: Json | null
           version: string
         }
         Insert: {
@@ -536,6 +545,7 @@ export type Database = {
           key: string
           owner_id?: string | null
           upload_signature: string
+          user_metadata?: Json | null
           version: string
         }
         Update: {
@@ -546,6 +556,7 @@ export type Database = {
           key?: string
           owner_id?: string | null
           upload_signature?: string
+          user_metadata?: Json | null
           version?: string
         }
         Relationships: [

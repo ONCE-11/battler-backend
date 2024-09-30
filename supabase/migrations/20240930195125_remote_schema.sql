@@ -1,6 +1,8 @@
 alter table "public"."characters" add column "fighting" boolean not null default false;
 
-alter table "public"."fights" alter column "winner" set data type uuid using "winner"::uuid;
+alter table "public"."fights" drop column "winner";
+
+alter table "public"."fights" add "winner" uuid;
 
 drop type "public"."player_slot";
 
