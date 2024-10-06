@@ -39,7 +39,6 @@ Deno.serve(async (req) => {
 
   try {
     const { userId } = await req.json();
-    // const supabase = generateSupabaseClient();
 
     const [
       { count: charactersCount, error: charactersCountError },
@@ -72,9 +71,9 @@ Deno.serve(async (req) => {
       .from("avatars")
       .getPublicUrl(avatarFilename);
 
-    const ability1 = generateRandomValueAndRemove(abilities!);
-    const ability2 = generateRandomValueAndRemove(abilities!);
-    const ability3 = generateRandomValueAndRemove(abilities!);
+    const ability1 = generateRandomValueAndRemove(abilities);
+    const ability2 = generateRandomValueAndRemove(abilities);
+    const ability3 = generateRandomValueAndRemove(abilities);
 
     const { data: newCharacterData, error: characterInsertError } =
       await supabase
@@ -119,6 +118,7 @@ Deno.serve(async (req) => {
       ability3,
     }, 201);
   } catch (error) {
+    console.error(error.stack);
     return functionResponse({ error: error.message }, 500);
   }
 });

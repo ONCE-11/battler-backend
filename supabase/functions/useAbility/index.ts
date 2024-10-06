@@ -1,14 +1,14 @@
 import {
   functionResponse,
-  generateSupabaseClient,
   preflightResponse,
+  supabase,
 } from "../_shared/utils.ts";
 import { Tables } from "../_shared/supabaseTypes.ts";
 
 type ReqParams = {
   abilityNumber: 1 | 2 | 3;
-  playerId: string;
-  opponentId: string;
+  initiatorId: string;
+  receiverId: string;
   fightId: string;
 };
 
@@ -23,6 +23,7 @@ type AbilityMetadata = {
 type FightUpdateFields = {
   game_over: Tables<"fights">["game_over"];
   turn: Tables<"fights">["turn"];
+  current_turn_player_id: Tables<"fights">["current_turn_player_id"];
   winner?: Tables<"fights">["winner"];
 };
 
@@ -49,20 +50,18 @@ Deno.serve(async (req) => {
       throw new Error("abilityNumber can only be 1, 2 or 3");
     }
 
-    const supabase = generateSupabaseClient();
-
     const playerCharacterQuery = supabase.from("characters").select(
       "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
-      reqParams.playerId,
+      reqParams.initiatorId,
     ).returns<CharactersWithAbilites[]>().single();
 
     const opponentCharacterQuery = supabase.from("characters").select(
       "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
-      reqParams.opponentId,
+      reqParams.receiverId,
     ).returns<CharactersWithAbilites[]>().single();
 
     const fightQuery = supabase.from("fights").select("*").eq(
@@ -85,7 +84,16 @@ Deno.serve(async (req) => {
     if (opponentError) throw opponentError;
     if (fightsError) throw fightsError;
 
-    const ability = player[`ability${reqParams.abilityNumber}`];
+    const ability = player[`ability${reqParams.abilityNumber}`] as
+      | CharactersWithAbilites[
+        "ability1"
+      ]
+      | CharactersWithAbilites[
+        "ability2"
+      ]
+      | CharactersWithAbilites[
+        "ability3"
+      ];
     let playerChanged = false;
     let opponentChanged = false;
 
@@ -124,8 +132,9 @@ Deno.serve(async (req) => {
       );
     }
 
+    // setting these variables becuase they will be used as values to update below
     let gameOver = false;
-    let winner: Tables<"fights">["winner"];
+    let winner: Tables<"fights">["winner"] = null;
 
     if (playerChanged) {
       let playerAlive = true;
@@ -182,13 +191,12 @@ Deno.serve(async (req) => {
 
     const fightUpdatefields: FightUpdateFields = {
       game_over: gameOver,
+      current_turn_player_id: fight.turn % 2 === 0
+        ? fight.player1_id
+        : fight.player2_id,
       turn: fight.turn + 1,
+      winner,
     };
-
-    // this code is weird, probably need to change this
-    if (winner!) {
-      fightUpdatefields.winner = winner;
-    }
 
     const { error: fightsUpdateError } = await supabase
       .from("fights").update(
@@ -200,13 +208,26 @@ Deno.serve(async (req) => {
 
     if (fightsUpdateError) throw fightsUpdateError;
 
+    // if()
+
+    let player1, player2;
+
+    if (player.id === fight.player1_id) {
+      player1 = player;
+      player2 = opponent;
+    } else {
+      player1 = opponent;
+      player2 = player;
+    }
+
     const { error: actionsInsertError } = await supabase.from("actions").insert(
       {
         initiator: player.id,
         type: "ability",
         metadata: {
-          initiator: player,
-          receiver: opponent,
+          fight: fightUpdatefields,
+          player1,
+          player2,
         },
       },
     );

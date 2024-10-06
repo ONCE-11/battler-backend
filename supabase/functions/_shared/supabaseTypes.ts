@@ -213,6 +213,7 @@ export type Database = {
       fights: {
         Row: {
           created_at: string
+          current_turn_player_id: string | null
           game_over: boolean
           id: string
           player1_id: string
@@ -222,6 +223,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_turn_player_id?: string | null
           game_over?: boolean
           id?: string
           player1_id: string
@@ -231,6 +233,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_turn_player_id?: string | null
           game_over?: boolean
           id?: string
           player1_id?: string
@@ -239,6 +242,13 @@ export type Database = {
           winner?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fights_current_turn_player_id_fkey"
+            columns: ["current_turn_player_id"]
+            isOneToOne: false
+            referencedRelation: "characters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fights_player1_id_fkey"
             columns: ["player1_id"]
@@ -396,6 +406,7 @@ export type Database = {
         }
         Returns: {
           created_at: string
+          current_turn_player_id: string | null
           game_over: boolean
           id: string
           player1_id: string

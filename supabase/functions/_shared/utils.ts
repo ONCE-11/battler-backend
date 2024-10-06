@@ -7,6 +7,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+export const supabase = createClient<Database>(
+  // TODO: switch SUPABASE_ANON_KEY here (only for initial work)
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+);
+
 export const generateSupabaseClient = () => {
   return createClient<Database>(
     Deno.env.get("SUPABASE_URL") ?? "",
