@@ -6,5 +6,5 @@
     },
     "deno.enable": true,
     "deno.importMap": "./supabase/functions/import_map.json",
-    "deno.suggest.imports.autoDiscover": true
+    "deno.suggest.imports.autoDiscover": true,
 }

@@ -1,4 +1,5 @@
 import {
+  createPGError,
   functionResponse,
   preflightResponse,
   supabase,
@@ -27,12 +28,18 @@ type FightUpdateFields = {
   winner?: Tables<"fights">["winner"];
 };
 
-type CharactersWithAbilites = {
-  id: Tables<"characters">["id"];
-  attack: Tables<"characters">["attack"];
-  defense: Tables<"characters">["defense"];
-  current_health: Tables<"characters">["current_health"];
-  max_health: Tables<"characters">["max_health"];
+// type CharactersWithAbilites = {
+//   id: Tables<"characters">["id"];
+//   attack: Tables<"characters">["attack"];
+//   defense: Tables<"characters">["defense"];
+//   current_health: Tables<"characters">["current_health"];
+//   max_health: Tables<"characters">["max_health"];
+//   ability1: Tables<"abilities"> & AbilityMetadata;
+//   ability2: Tables<"abilities"> & AbilityMetadata;
+//   ability3: Tables<"abilities"> & AbilityMetadata;
+// };
+
+type CharactersWithAbilites = Tables<"characters"> & {
   ability1: Tables<"abilities"> & AbilityMetadata;
   ability2: Tables<"abilities"> & AbilityMetadata;
   ability3: Tables<"abilities"> & AbilityMetadata;
@@ -51,14 +58,14 @@ Deno.serve(async (req) => {
     }
 
     const playerCharacterQuery = supabase.from("characters").select(
-      "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
+      "*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
       reqParams.initiatorId,
     ).returns<CharactersWithAbilites[]>().single();
 
     const opponentCharacterQuery = supabase.from("characters").select(
-      "id, attack, defense, current_health, max_health, alive, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
+      "*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
     ).eq(
       "id",
       reqParams.receiverId,
@@ -80,9 +87,9 @@ Deno.serve(async (req) => {
         fightQuery,
       ]);
 
-    if (playerError) throw playerError;
-    if (opponentError) throw opponentError;
-    if (fightsError) throw fightsError;
+    if (playerError) throw createPGError(playerError);
+    if (opponentError) throw createPGError(opponentError);
+    if (fightsError) throw createPGError(fightsError);
 
     const ability = player[`ability${reqParams.abilityNumber}`] as
       | CharactersWithAbilites[
@@ -137,13 +144,10 @@ Deno.serve(async (req) => {
     let winner: Tables<"fights">["winner"] = null;
 
     if (playerChanged) {
-      let playerAlive = true;
-
       if (player.current_health === 0) {
-        playerAlive = false;
-        // winner = "2";
-        winner = opponent.id === fight.player1_id ? "1" : "2";
+        winner = opponent.id;
         gameOver = true;
+        player.alive = false;
       }
 
       const { error: playerUpdateError } = await supabase
@@ -153,23 +157,21 @@ Deno.serve(async (req) => {
             defense: player.defense,
             current_health: player.current_health,
             max_health: player.max_health,
-            alive: playerAlive,
+            alive: player.alive,
           },
         ).eq(
           "id",
           player.id,
         );
 
-      if (playerUpdateError) throw playerUpdateError;
+      if (playerUpdateError) throw createPGError(playerUpdateError);
     }
 
     if (opponentChanged) {
-      let opponentAlive = true;
-
       if (opponent.current_health === 0) {
-        opponentAlive = false;
-        winner = player.id === fight.player1_id ? "1" : "2";
+        winner = player.id;
         gameOver = true;
+        opponent.alive = false;
       }
 
       const { error: opponentUpdateError } = await supabase
@@ -179,15 +181,22 @@ Deno.serve(async (req) => {
             defense: opponent.defense,
             current_health: opponent.current_health,
             max_health: opponent.max_health,
-            alive: opponentAlive,
+            alive: opponent.alive,
           },
         ).eq(
           "id",
           opponent.id,
         );
 
-      if (opponentUpdateError) throw opponentUpdateError;
+      if (opponentUpdateError) throw createPGError(opponentUpdateError);
     }
+
+    console.log({ fight });
+
+    console.log(
+      "current turn player id: ",
+      fight.turn % 2 === 0 ? fight.player1_id : fight.player2_id,
+    );
 
     const fightUpdatefields: FightUpdateFields = {
       game_over: gameOver,
@@ -198,6 +207,14 @@ Deno.serve(async (req) => {
       winner,
     };
 
+    // const { error: fightsUpdateError } = await supabase
+    //   .from("fights").update(
+    //     { turn: fight.turn + 1 },
+    //   ).eq(
+    //     "id",
+    //     reqParams.fightId,
+    //   );
+
     const { error: fightsUpdateError } = await supabase
       .from("fights").update(
         fightUpdatefields,
@@ -206,9 +223,7 @@ Deno.serve(async (req) => {
         reqParams.fightId,
       );
 
-    if (fightsUpdateError) throw fightsUpdateError;
-
-    // if()
+    if (fightsUpdateError) throw createPGError(fightsUpdateError);
 
     let player1, player2;
 
@@ -228,11 +243,12 @@ Deno.serve(async (req) => {
           fight: fightUpdatefields,
           player1,
           player2,
+          winnerId: winner,
         },
       },
     );
 
-    if (actionsInsertError) throw actionsInsertError;
+    if (actionsInsertError) throw createPGError(actionsInsertError);
 
     return functionResponse({ successful: true }, 200);
   } catch (error) {

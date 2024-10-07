@@ -1,5 +1,5 @@
 import { Database } from "./supabaseTypes.ts";
-import { createClient } from "supabase";
+import { createClient, PostgrestError } from "supabase";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -36,3 +36,9 @@ export const functionResponse = (response: object, status: number) => {
     status: status,
   });
 };
+
+export function createPGError(error: PostgrestError): void {
+  throw new Error(error.message, {
+    cause: JSON.stringify(error),
+  });
+}
