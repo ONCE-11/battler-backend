@@ -28,17 +28,6 @@ type FightUpdateFields = {
   winner_id: Tables<"fights">["winner_id"];
 };
 
-// type CharactersWithAbilites = {
-//   id: Tables<"characters">["id"];
-//   attack: Tables<"characters">["attack"];
-//   defense: Tables<"characters">["defense"];
-//   current_health: Tables<"characters">["current_health"];
-//   max_health: Tables<"characters">["max_health"];
-//   ability1: Tables<"abilities"> & AbilityMetadata;
-//   ability2: Tables<"abilities"> & AbilityMetadata;
-//   ability3: Tables<"abilities"> & AbilityMetadata;
-// };
-
 type CharactersWithAbilites = Tables<"characters"> & {
   ability1: Tables<"abilities"> & AbilityMetadata;
   ability2: Tables<"abilities"> & AbilityMetadata;
@@ -105,29 +94,12 @@ Deno.serve(async (req) => {
       | CharactersWithAbilites[
         "ability3"
       ];
-    let playerChanged = false;
-    let opponentChanged = false;
 
     console.log({ ability });
 
-    // check if player or opponent data has changed
-    const playerProxy = new Proxy(player, {
-      set(...args) {
-        playerChanged = true;
-        return Reflect.set(...args);
-      },
-    });
-
-    const opponentProxy = new Proxy(opponent, {
-      set(...args) {
-        opponentChanged = true;
-        return Reflect.set(...args);
-      },
-    });
-
     if (ability.metadata.attack) {
       // health should not exceed max health
-      opponentProxy.current_health = Math.max(
+      opponent.current_health = Math.max(
         0,
         opponent.current_health -
           Math.round(player.attack * ability.metadata.attack),
@@ -136,7 +108,7 @@ Deno.serve(async (req) => {
 
     if (ability.metadata.health) {
       // health should not be less than 0
-      playerProxy.current_health = Math.min(
+      player.current_health = Math.min(
         player.max_health,
         player.current_health +
           ability.metadata.health,
@@ -147,64 +119,63 @@ Deno.serve(async (req) => {
     let gameOver = false;
     let winnerId: Tables<"fights">["winner_id"] = null;
 
-    if (playerChanged) {
-      if (player.current_health === 0) {
-        winnerId = opponent.id;
-        gameOver = true;
-        player.alive = false;
-      }
-
-      if (SAVE_FIELDS) {
-        const { error: playerUpdateError } = await supabase
-          .from("characters").update(
-            {
-              attack: player.attack,
-              defense: player.defense,
-              current_health: player.current_health,
-              max_health: player.max_health,
-              alive: player.alive,
-            },
-          ).eq(
-            "id",
-            player.id,
-          );
-
-        if (playerUpdateError) throw createPGError(playerUpdateError);
-      }
+    if (player.current_health === 0 || opponent.current_health === 0) {
+      gameOver = true;
+      player.fighting = false;
+      opponent.fighting = false;
     }
 
-    if (opponentChanged) {
-      if (opponent.current_health === 0) {
-        winnerId = player.id;
-        gameOver = true;
-        opponent.alive = false;
-      }
-
-      if (SAVE_FIELDS) {
-        const { error: opponentUpdateError } = await supabase
-          .from("characters").update(
-            {
-              attack: opponent.attack,
-              defense: opponent.defense,
-              current_health: opponent.current_health,
-              max_health: opponent.max_health,
-              alive: opponent.alive,
-            },
-          ).eq(
-            "id",
-            opponent.id,
-          );
-
-        if (opponentUpdateError) throw createPGError(opponentUpdateError);
-      }
+    if (player.current_health === 0) {
+      winnerId = opponent.id;
+      player.alive = false;
+      player.fighting = false;
+      opponent.fighting = false;
     }
 
-    console.log({ fight });
+    if (SAVE_FIELDS) {
+      const { error: playerUpdateError } = await supabase
+        .from("characters").update(
+          {
+            attack: player.attack,
+            defense: player.defense,
+            current_health: player.current_health,
+            max_health: player.max_health,
+            alive: player.alive,
+            fighting: player.fighting,
+          },
+        ).eq(
+          "id",
+          player.id,
+        );
 
-    console.log(
-      "current turn player id: ",
-      fight.turn % 2 === 0 ? fight.player1_id : fight.player2_id,
-    );
+      if (playerUpdateError) throw createPGError(playerUpdateError);
+    }
+
+    if (opponent.current_health === 0) {
+      winnerId = player.id;
+      opponent.alive = false;
+      player.fighting = false;
+      opponent.fighting = false;
+    }
+
+    if (SAVE_FIELDS) {
+      const { error: opponentUpdateError } = await supabase
+        .from("characters").update(
+          {
+            attack: opponent.attack,
+            defense: opponent.defense,
+            current_health: opponent.current_health,
+            max_health: opponent.max_health,
+            alive: opponent.alive,
+            fighting: opponent.fighting,
+          },
+        ).eq(
+          "id",
+          opponent.id,
+        );
+
+      if (opponentUpdateError) throw createPGError(opponentUpdateError);
+    }
 
     const fightUpdatefields: FightUpdateFields = {
       game_over: gameOver,
