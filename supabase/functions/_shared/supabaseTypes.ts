@@ -213,33 +213,33 @@ export type Database = {
       fights: {
         Row: {
           created_at: string
-          current_turn_player_id: string | null
+          current_turn_player_id: string
           game_over: boolean
           id: string
           player1_id: string
           player2_id: string
           turn: number
-          winner: string | null
+          winner_id: string | null
         }
         Insert: {
           created_at?: string
-          current_turn_player_id?: string | null
+          current_turn_player_id: string
           game_over?: boolean
           id?: string
           player1_id: string
           player2_id: string
           turn?: number
-          winner?: string | null
+          winner_id?: string | null
         }
         Update: {
           created_at?: string
-          current_turn_player_id?: string | null
+          current_turn_player_id?: string
           game_over?: boolean
           id?: string
           player1_id?: string
           player2_id?: string
           turn?: number
-          winner?: string | null
+          winner_id?: string | null
         }
         Relationships: [
           {
@@ -264,8 +264,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fights_winner_fkey"
-            columns: ["winner"]
+            foreignKeyName: "fights_winner_id_fkey"
+            columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "characters"
             referencedColumns: ["id"]
@@ -406,13 +406,13 @@ export type Database = {
         }
         Returns: {
           created_at: string
-          current_turn_player_id: string | null
+          current_turn_player_id: string
           game_over: boolean
           id: string
           player1_id: string
           player2_id: string
           turn: number
-          winner: string | null
+          winner_id: string | null
         }[]
       }
     }
