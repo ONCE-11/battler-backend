@@ -39,7 +39,10 @@ Deno.serve(async (req) => {
     return preflightResponse();
   }
 
-  const SAVE_FIELDS = Deno.env.get("SAVE_FIELDS") === "true" ? true : false;
+  const SAVE_FIELDS = Deno.env.get("SAVE_FIELDS") === "true" ||
+      typeof Deno.env.get("SAVE_FIELDS") === "undefined"
+    ? true
+    : false;
 
   console.log({ SAVE_FIELDS });
 
@@ -104,6 +107,7 @@ Deno.serve(async (req) => {
         opponent.current_health -
           Math.round(player.attack * ability.metadata.attack),
       );
+      console.log({ opponent });
     }
 
     if (ability.metadata.health) {
@@ -128,8 +132,6 @@ Deno.serve(async (req) => {
     if (player.current_health === 0) {
       winnerId = opponent.id;
       player.alive = false;
-      player.fighting = false;
-      opponent.fighting = false;
     }
 
     if (SAVE_FIELDS) {
@@ -154,8 +156,6 @@ Deno.serve(async (req) => {
     if (opponent.current_health === 0) {
       winnerId = player.id;
       opponent.alive = false;
-      player.fighting = false;
-      opponent.fighting = false;
     }
 
     if (SAVE_FIELDS) {
