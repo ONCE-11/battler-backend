@@ -8,9 +8,9 @@ import { Tables } from "../_shared/supabaseTypes.ts";
 
 type ReqParams = {
   abilityNumber: 1 | 2 | 3;
-  initiatorId: string;
-  receiverId: string;
-  fightId: string;
+  initiatorId: Tables<"characters">["id"];
+  receiverId: Tables<"characters">["id"];
+  fightId: Tables<"fights">["id"];
 };
 
 type AbilityMetadata = {
@@ -28,10 +28,15 @@ type FightUpdateFields = {
   winner_id: Tables<"fights">["winner_id"];
 };
 
-type CharactersWithAbilites = Tables<"characters"> & {
+type CharacterWithAbilities = Tables<"characters"> & {
   ability1: Tables<"abilities"> & AbilityMetadata;
   ability2: Tables<"abilities"> & AbilityMetadata;
   ability3: Tables<"abilities"> & AbilityMetadata;
+};
+
+type FightWithPlayers = Tables<"fights"> & {
+  player1: CharacterWithAbilities;
+  player2: CharacterWithAbilities;
 };
 
 Deno.serve(async (req) => {
@@ -48,53 +53,41 @@ Deno.serve(async (req) => {
 
   try {
     const reqParams: ReqParams = await req.json();
+    let initiator: CharacterWithAbilities, receiver: CharacterWithAbilities;
 
     if (![1, 2, 3].includes(reqParams.abilityNumber)) {
       throw new Error("abilityNumber can only be 1, 2 or 3");
     }
 
-    const playerCharacterQuery = supabase.from("characters").select(
-      "*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
+    const { data: fight, error: fetchFightError } = await supabase.from(
+      "fights",
+    ).select(
+      "*, player1:player1_id (*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)), player2:player2_id(*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*))",
     ).eq(
-      "id",
-      reqParams.initiatorId,
-    ).returns<CharactersWithAbilites[]>().single();
-
-    const opponentCharacterQuery = supabase.from("characters").select(
-      "*, ability1:ability_1_id (*), ability2:ability_2_id (*), ability3:ability_3_id (*)",
-    ).eq(
-      "id",
-      reqParams.receiverId,
-    ).returns<CharactersWithAbilites[]>().single();
-
-    const fightQuery = supabase.from("fights").select("*").eq(
       "id",
       reqParams.fightId,
-    ).returns<Tables<"fights">[]>().single();
+    ).returns<FightWithPlayers[]>().single();
 
-    const [
-      { data: player, error: playerError },
-      { data: opponent, error: opponentError },
-      { data: fight, error: fightsError },
-    ] = await Promise
-      .all([
-        playerCharacterQuery,
-        opponentCharacterQuery,
-        fightQuery,
-      ]);
+    if (fetchFightError) throw createPGError(fetchFightError);
 
-    if (playerError) throw createPGError(playerError);
-    if (opponentError) throw createPGError(opponentError);
-    if (fightsError) throw createPGError(fightsError);
+    console.log({ fight });
 
-    const ability = player[`ability${reqParams.abilityNumber}`] as
-      | CharactersWithAbilites[
+    if (reqParams.initiatorId === fight.player1_id) {
+      initiator = fight.player1;
+      receiver = fight.player2;
+    } else {
+      initiator = fight.player2;
+      receiver = fight.player1;
+    }
+
+    const ability = initiator[`ability${reqParams.abilityNumber}`] as
+      | CharacterWithAbilities[
         "ability1"
       ]
-      | CharactersWithAbilites[
+      | CharacterWithAbilities[
         "ability2"
       ]
-      | CharactersWithAbilites[
+      | CharacterWithAbilities[
         "ability3"
       ];
 
@@ -102,19 +95,19 @@ Deno.serve(async (req) => {
 
     if (ability.metadata.attack) {
       // health should not exceed max health
-      opponent.current_health = Math.max(
+      receiver.current_health = Math.max(
         0,
-        opponent.current_health -
-          Math.round(player.attack * ability.metadata.attack),
+        receiver.current_health -
+          Math.round(initiator.attack * ability.metadata.attack),
       );
-      console.log({ opponent });
+      console.log({ receiver });
     }
 
     if (ability.metadata.health) {
       // health should not be less than 0
-      player.current_health = Math.min(
-        player.max_health,
-        player.current_health +
+      initiator.current_health = Math.min(
+        initiator.max_health,
+        initiator.current_health +
           ability.metadata.health,
       );
     }
@@ -123,55 +116,55 @@ Deno.serve(async (req) => {
     let gameOver = false;
     let winnerId: Tables<"fights">["winner_id"] = null;
 
-    if (player.current_health === 0 || opponent.current_health === 0) {
+    if (initiator.current_health === 0 || receiver.current_health === 0) {
       gameOver = true;
-      player.fighting = false;
-      opponent.fighting = false;
+      initiator.fighting = false;
+      receiver.fighting = false;
     }
 
-    if (player.current_health === 0) {
-      winnerId = opponent.id;
-      player.alive = false;
+    if (initiator.current_health === 0) {
+      winnerId = receiver.id;
+      initiator.alive = false;
     }
 
     if (SAVE_FIELDS) {
       const { error: playerUpdateError } = await supabase
         .from("characters").update(
           {
-            attack: player.attack,
-            defense: player.defense,
-            current_health: player.current_health,
-            max_health: player.max_health,
-            alive: player.alive,
-            fighting: player.fighting,
+            attack: initiator.attack,
+            defense: initiator.defense,
+            current_health: initiator.current_health,
+            max_health: initiator.max_health,
+            alive: initiator.alive,
+            fighting: initiator.fighting,
           },
         ).eq(
           "id",
-          player.id,
+          initiator.id,
         );
 
       if (playerUpdateError) throw createPGError(playerUpdateError);
     }
 
-    if (opponent.current_health === 0) {
-      winnerId = player.id;
-      opponent.alive = false;
+    if (receiver.current_health === 0) {
+      winnerId = initiator.id;
+      receiver.alive = false;
     }
 
     if (SAVE_FIELDS) {
       const { error: opponentUpdateError } = await supabase
         .from("characters").update(
           {
-            attack: opponent.attack,
-            defense: opponent.defense,
-            current_health: opponent.current_health,
-            max_health: opponent.max_health,
-            alive: opponent.alive,
-            fighting: opponent.fighting,
+            attack: receiver.attack,
+            defense: receiver.defense,
+            current_health: receiver.current_health,
+            max_health: receiver.max_health,
+            alive: receiver.alive,
+            fighting: receiver.fighting,
           },
         ).eq(
           "id",
-          opponent.id,
+          receiver.id,
         );
 
       if (opponentUpdateError) throw createPGError(opponentUpdateError);
@@ -212,17 +205,17 @@ Deno.serve(async (req) => {
 
     let player1, player2;
 
-    if (player.id === fight.player1_id) {
-      player1 = player;
-      player2 = opponent;
+    if (initiator.id === fight.player1_id) {
+      player1 = initiator;
+      player2 = receiver;
     } else {
-      player1 = opponent;
-      player2 = player;
+      player1 = receiver;
+      player2 = initiator;
     }
 
     const { error: actionsInsertError } = await supabase.from("actions").insert(
       {
-        initiator: player.id,
+        initiator: initiator.id,
         type: "ability",
         metadata: {
           ...fightUpdatefields,
