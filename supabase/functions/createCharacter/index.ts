@@ -3,34 +3,37 @@ import {
   generateSupabaseClient,
   preflightResponse,
 } from "../_shared/utils.ts";
-import { Database } from "../_shared/supabaseTypes.ts";
+import {
+  AbilityWithMetadata,
+  CharacterWithAbilities,
+} from "../_shared/types.ts";
 
 const supabase = generateSupabaseClient();
 
-const generateRandomValue = (min: number, max: number) => {
+function generateRandomValue(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+}
 
-const generateRandomValueAndRemove = (
-  abilities: Database["public"]["Tables"]["abilities"]["Row"][],
-) => {
+function generateRandomValueAndRemove(
+  abilities: AbilityWithMetadata[],
+): AbilityWithMetadata {
   const randomIndex = generateRandomValue(0, abilities.length - 1);
   const randomValue = abilities[randomIndex];
   abilities.splice(randomIndex, 1);
 
   return randomValue;
-};
+}
 
-const generateCharacterName = async (): Promise<string> => {
+async function generateCharacterName(): Promise<string> {
   const { data: names, error } = await supabase.from("names").select("*");
   if (error) throw error;
 
   const { prefix, suffix } = names[generateRandomValue(0, names.length - 1)];
 
   return `${prefix} ${suffix}`;
-};
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -50,7 +53,7 @@ Deno.serve(async (req) => {
         .select("*", { count: "exact", head: true })
         .eq("alive", true)
         .eq("user_id", userId),
-      supabase.from("abilities").select(),
+      supabase.from("abilities").select("*").returns<AbilityWithMetadata[]>(),
       supabase.storage.from("avatars").list(),
     ]);
 
@@ -104,19 +107,14 @@ Deno.serve(async (req) => {
 
     if (characterInsertError) throw characterInsertError;
 
-    return functionResponse({
-      id: newCharacterData.id,
-      attack: newCharacterData.attack,
-      defense: newCharacterData.defense,
-      maxHealth: newCharacterData.max_health,
-      currentHealth: newCharacterData.current_health,
-      avatarUrl: newCharacterData.avatar_url,
-      createdAt: newCharacterData.created_at,
-      name: newCharacterData.name,
+    const response: CharacterWithAbilities = {
+      ...newCharacterData,
       ability1,
       ability2,
       ability3,
-    }, 201);
+    };
+
+    return functionResponse(response, 201);
   } catch (error) {
     console.error(error.stack);
     return functionResponse({ error: error.message }, 500);

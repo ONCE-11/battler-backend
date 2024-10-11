@@ -5,20 +5,13 @@ import {
   supabase,
 } from "../_shared/utils.ts";
 import { Tables } from "../_shared/supabaseTypes.ts";
+import { CharacterWithAbilities } from "../_shared/types.ts";
 
 type ReqParams = {
   abilityNumber: 1 | 2 | 3;
   initiatorId: Tables<"characters">["id"];
   receiverId: Tables<"characters">["id"];
   fightId: Tables<"fights">["id"];
-};
-
-type AbilityMetadata = {
-  metadata: {
-    attack?: number;
-    defense?: number;
-    health?: number;
-  };
 };
 
 type FightUpdateFields = {
@@ -28,11 +21,6 @@ type FightUpdateFields = {
   winner_id: Tables<"fights">["winner_id"];
 };
 
-type CharacterWithAbilities = Tables<"characters"> & {
-  ability1: Tables<"abilities"> & AbilityMetadata;
-  ability2: Tables<"abilities"> & AbilityMetadata;
-  ability3: Tables<"abilities"> & AbilityMetadata;
-};
 
 type FightWithPlayers = Tables<"fights"> & {
   player1: CharacterWithAbilities;
@@ -53,7 +41,8 @@ Deno.serve(async (req) => {
 
   try {
     const reqParams: ReqParams = await req.json();
-    let initiator: CharacterWithAbilities, receiver: CharacterWithAbilities;
+    let initiator: CharacterWithAbilities,
+      receiver: CharacterWithAbilities;
 
     if (![1, 2, 3].includes(reqParams.abilityNumber)) {
       throw new Error("abilityNumber can only be 1, 2 or 3");
