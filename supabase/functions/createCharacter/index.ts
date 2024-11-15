@@ -1,14 +1,14 @@
 import {
   functionResponse,
-  generateSupabaseClient,
   preflightResponse,
+  supabase,
 } from "../_shared/utils.ts";
 import {
   AbilityWithMetadata,
   CharacterWithAbilities,
 } from "../_shared/types.ts";
 
-const supabase = generateSupabaseClient();
+// const supabase = generateSupabaseClient();
 
 function generateRandomValue(min: number, max: number) {
   min = Math.ceil(min);
@@ -116,7 +116,15 @@ Deno.serve(async (req) => {
 
     return functionResponse(response, 201);
   } catch (error) {
-    console.error(error.stack);
-    return functionResponse({ error: error.message }, 500);
+    let message;
+
+    if (error instanceof Error) {
+      console.error(error);
+      message = error.message;
+    } else {
+      message = "Unknown error";
+    }
+
+    return functionResponse({ error: message }, 500);
   }
 });

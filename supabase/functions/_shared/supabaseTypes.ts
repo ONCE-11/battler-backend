@@ -92,9 +92,9 @@ export type Database = {
       }
       characters: {
         Row: {
-          ability_1_id: string | null
-          ability_2_id: string | null
-          ability_3_id: string | null
+          ability_1_id: string
+          ability_2_id: string
+          ability_3_id: string
           accessory_item_id: string | null
           alive: boolean
           attack: number
@@ -112,9 +112,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          ability_1_id?: string | null
-          ability_2_id?: string | null
-          ability_3_id?: string | null
+          ability_1_id: string
+          ability_2_id: string
+          ability_3_id: string
           accessory_item_id?: string | null
           alive?: boolean
           attack: number
@@ -132,9 +132,9 @@ export type Database = {
           user_id: string
         }
         Update: {
-          ability_1_id?: string | null
-          ability_2_id?: string | null
-          ability_3_id?: string | null
+          ability_1_id?: string
+          ability_2_id?: string
+          ability_3_id?: string
           accessory_item_id?: string | null
           alive?: boolean
           attack?: number
@@ -199,13 +199,6 @@ export type Database = {
             columns: ["defense_item_id"]
             isOneToOne: false
             referencedRelation: "items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "characters_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -384,15 +377,7 @@ export type Database = {
           pesos?: number
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -821,5 +806,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 

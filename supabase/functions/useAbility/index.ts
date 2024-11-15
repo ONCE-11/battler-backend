@@ -21,7 +21,6 @@ type FightUpdateFields = {
   winner_id: Tables<"fights">["winner_id"];
 };
 
-
 type FightWithPlayers = Tables<"fights"> & {
   player1: CharacterWithAbilities;
   player2: CharacterWithAbilities;
@@ -219,7 +218,14 @@ Deno.serve(async (req) => {
 
     return functionResponse({ successful: true }, 200);
   } catch (error) {
-    console.error(error);
-    return functionResponse({ successful: false, error: error.message }, 500);
+    let message;
+
+    if (error instanceof Error) {
+      console.error(error);
+      message = error.message;
+    } else {
+      message = "Unknown error";
+    }
+    return functionResponse({ successful: false, error: message }, 500);
   }
 });

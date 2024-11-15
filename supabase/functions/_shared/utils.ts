@@ -37,8 +37,8 @@ export const functionResponse = (response: object, status: number) => {
   });
 };
 
-export function createPGError(error: PostgrestError): void {
-  throw new Error(error.message, {
+export function createPGError(error: PostgrestError): Error {
+  return new Error(error.message, {
     cause: JSON.stringify(error),
   });
 }
