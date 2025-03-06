@@ -97,7 +97,10 @@ Deno.serve(async (req) => {
               Deno.env.get("LOCAL_BUCKET_URL")!,
             )
             : avatarUrl,
-          // name: generateCharacterNameFromFilename(avatarFilename),
+          avatar_path: avatarUrl.replace(
+            Deno.env.get("SUPABASE_URL")!,
+            "",
+          ),
           name: await generateCharacterName(),
         })
         .select(

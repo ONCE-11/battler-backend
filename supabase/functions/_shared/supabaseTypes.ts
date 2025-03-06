@@ -99,6 +99,7 @@ export type Database = {
           alive: boolean
           attack: number
           attack_item_id: string | null
+          avatar_path: string
           avatar_url: string
           consumable_id: string | null
           created_at: string
@@ -119,6 +120,7 @@ export type Database = {
           alive?: boolean
           attack: number
           attack_item_id?: string | null
+          avatar_path: string
           avatar_url: string
           consumable_id?: string | null
           created_at?: string
@@ -139,6 +141,7 @@ export type Database = {
           alive?: boolean
           attack?: number
           attack_item_id?: string | null
+          avatar_path?: string
           avatar_url?: string
           consumable_id?: string | null
           created_at?: string

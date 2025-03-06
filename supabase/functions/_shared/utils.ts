@@ -1,10 +1,21 @@
 import { Database } from "./supabaseTypes.ts";
 import { createClient, PostgrestError } from "supabase";
 
+const allowedHeaders = [
+  "authorization",
+  "x-client-info",
+  "apikey",
+  "content-type",
+];
+
+// for local tunneling using ngrok
+if (Deno.env.get("DENO_ENV") === "development") {
+  allowedHeaders.push("ngrok-skip-browser-warning");
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": allowedHeaders.join(", "),
 };
 
 export const supabase = createClient<Database>(
