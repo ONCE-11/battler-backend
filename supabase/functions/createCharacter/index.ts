@@ -27,7 +27,7 @@ function generateRandomValueAndRemove(
 }
 
 async function generateCharacterName(): Promise<string> {
-  const { data: names, error } = await supabase.from("names").select("*");
+  const { data: names, error } = await supabase.from("archetypes").select("*");
   if (error) throw error;
 
   const { prefix, suffix } = names[generateRandomValue(0, names.length - 1)];

@@ -90,6 +90,27 @@ export type Database = {
           },
         ]
       }
+      archetypes: {
+        Row: {
+          created_at: string
+          id: number
+          prefix: string
+          suffix: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          prefix: string
+          suffix?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          prefix?: string
+          suffix?: string
+        }
+        Relationships: []
+      }
       characters: {
         Row: {
           ability_1_id: string
@@ -331,27 +352,6 @@ export type Database = {
           metadata?: Json | null
           name?: string
           price?: number
-        }
-        Relationships: []
-      }
-      names: {
-        Row: {
-          created_at: string
-          id: number
-          prefix: string
-          suffix: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          prefix: string
-          suffix?: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          prefix?: string
-          suffix?: string
         }
         Relationships: []
       }
