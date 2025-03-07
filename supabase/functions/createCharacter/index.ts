@@ -27,12 +27,12 @@ function generateRandomValueAndRemove(
 }
 
 async function generateCharacterName(): Promise<string> {
-  const { data: names, error } = await supabase.from("archetypes").select("*");
+  const { data: archetypes, error } = await supabase.from("archetypes").select("*");
   if (error) throw error;
 
-  const { name, suffix } = names[generateRandomValue(0, names.length - 1)];
+  const { name } = archetypes[generateRandomValue(0, archetypes.length - 1)];
 
-  return `${name} ${suffix}`;
+  return name;
 }
 
 Deno.serve(async (req) => {

@@ -1,17 +1,17 @@
-id,created_at,prefix,suffix
+id,created_at,name,suffix
 8,2024-08-27 19:18:24.140934+00,Primo,
-12,2024-11-20 03:19:24.933866+00,[unknown],
-14,2024-11-20 03:32:23.038059+00,Boomer,
-1,2024-08-27 19:15:01.437743+00,Kiki,
-5,2024-08-27 19:17:28.695931+00,Doomer Dana,Dana
-4,2024-08-27 19:16:59.786495+00,Psycho Sal,Sal
-3,2024-08-27 19:16:27.694774+00,El Cojo,Cojo
-2,2024-08-27 19:16:11.538412+00,"Connie
+9,2024-11-20 03:19:24.933866+00,[unknown],
+10,2024-11-20 03:32:23.038059+00,Boomer,
+11,2024-08-27 19:15:01.437743+00,Kiki,
+12,2024-08-27 19:17:28.695931+00,Doomer Dana,Dana
+13,2024-08-27 19:16:59.786495+00,Psycho Sal,Sal
+14,2024-08-27 19:16:27.694774+00,El Cojo,Cojo
+15,2024-08-27 19:16:11.538412+00,"Connie
 Clever ",Connie
-7,2024-08-27 19:18:06.955433+00,Terrible Tyrone,Tyrone
-6,2024-08-27 19:17:43.543611+00,Trish the Tyrant,the Tyrant
-9,2024-11-20 03:13:11.801404+00,Larry the Lawyer,the Lawyer
-10,2024-11-20 03:14:53.645854+00,Sanchez Gomez,Gomez
-11,2024-11-20 03:19:06.053893+00,firstName lastName,lastName
-13,2024-11-20 03:20:00.510861+00,Gary the Gamer,the Gamer
-15,2024-11-20 03:33:01.407873+00,El Matatan,Matatan
+16,2024-08-27 19:18:06.955433+00,Terrible Tyrone,Tyrone
+17,2024-08-27 19:17:43.543611+00,Trish the Tyrant,the Tyrant
+18,2024-11-20 03:13:11.801404+00,Larry the Lawyer,the Lawyer
+19,2024-11-20 03:14:53.645854+00,Sanchez Gomez,Gomez
+20,2024-11-20 03:19:06.053893+00,firstName lastName,lastName
+21,2024-11-20 03:20:00.510861+00,Gary the Gamer,the Gamer
+22,2024-11-20 03:33:01.407873+00,El Matatan,Matatan
