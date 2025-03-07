@@ -30,9 +30,9 @@ async function generateCharacterName(): Promise<string> {
   const { data: names, error } = await supabase.from("archetypes").select("*");
   if (error) throw error;
 
-  const { prefix, suffix } = names[generateRandomValue(0, names.length - 1)];
+  const { name, suffix } = names[generateRandomValue(0, names.length - 1)];
 
-  return `${prefix} ${suffix}`;
+  return `${name} ${suffix}`;
 }
 
 Deno.serve(async (req) => {

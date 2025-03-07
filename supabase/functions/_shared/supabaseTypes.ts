@@ -94,19 +94,19 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          prefix: string
+          name: string
           suffix: string
         }
         Insert: {
           created_at?: string
           id?: number
-          prefix: string
+          name: string
           suffix?: string
         }
         Update: {
           created_at?: string
           id?: number
-          prefix?: string
+          name?: string
           suffix?: string
         }
         Relationships: []
