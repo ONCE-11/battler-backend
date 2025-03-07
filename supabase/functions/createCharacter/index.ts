@@ -16,18 +16,33 @@ function generateRandomValue(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateRandomValueAndRemove(
-  abilities: AbilityWithMetadata[],
-): AbilityWithMetadata {
-  const randomIndex = generateRandomValue(0, abilities.length - 1);
-  const randomValue = abilities[randomIndex];
-  abilities.splice(randomIndex, 1);
+function pickSpecialAbility(abilities: AbilityWithMetadata[]) {
+  const specialAbilities = abilities.filter((ability) =>
+    ability.type === "special"
+  );
+  const randomIndex = generateRandomValue(0, specialAbilities.length - 1);
+  return specialAbilities[randomIndex];
+}
 
-  return randomValue;
+function pickStrongAbility(abilities: AbilityWithMetadata[]) {
+  const strongAbilities = abilities.filter((ability) =>
+    ability.type === "strong"
+  );
+  const randomIndex = generateRandomValue(0, strongAbilities.length - 1);
+  return strongAbilities[randomIndex];
+}
+
+function pickWeakAbility(abilities: AbilityWithMetadata[]) {
+  const weakAbilities = abilities.filter((ability) => ability.type === "weak");
+  console.log(weakAbilities);
+  const randomIndex = generateRandomValue(0, weakAbilities.length - 1);
+  return weakAbilities[randomIndex];
 }
 
 async function generateCharacterName(): Promise<string> {
-  const { data: archetypes, error } = await supabase.from("archetypes").select("*");
+  const { data: archetypes, error } = await supabase.from("archetypes").select(
+    "*",
+  );
   if (error) throw error;
 
   const { name } = archetypes[generateRandomValue(0, archetypes.length - 1)];
@@ -74,9 +89,9 @@ Deno.serve(async (req) => {
       .from("avatars")
       .getPublicUrl(avatarFilename);
 
-    const ability1 = generateRandomValueAndRemove(abilities);
-    const ability2 = generateRandomValueAndRemove(abilities);
-    const ability3 = generateRandomValueAndRemove(abilities);
+    const ability1 = pickWeakAbility(abilities);
+    const ability2 = pickStrongAbility(abilities);
+    const ability3 = pickSpecialAbility(abilities);
 
     const { data: newCharacterData, error: characterInsertError } =
       await supabase
