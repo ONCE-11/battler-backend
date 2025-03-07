@@ -1,13 +1,16 @@
-id,created_at,name,description,metadata
-1b8f49e7-c528-4710-a782-ab6fe4b3df61,2024-02-13 22:24:11.412419+00,throw poop,Ewwww,"{""attack"":1.1,""cleanliness"":-2}"
-82626e00-5416-4035-a7f0-b3980caed102,2024-02-13 22:26:30.504027+00,run away,If it works it works,"{""miss"":0.5}"
-c6f111a1-7922-45b2-85e4-e67ea926a7a9,2024-02-13 22:27:43.319208+00,heal me,I feel better now 🙂,"{""health"":30}"
-21e28c52-8622-40ff-9256-dba4f0d7af55,2024-02-13 22:30:11.4715+00,all seeing eye,Illuminati confirmed,"{}"
-91ae0151-f956-44c2-986a-7f04086ae6dd,2024-02-13 22:31:26.456209+00,strong kick,Better than a weak kick,"{""attack"":2}"
-95f249a1-c0e0-48da-86ca-b1ad8a1681db,2024-02-13 22:32:11.277656+00,weak kick,A very weak kick,"{""miss"":0.2,""attack"":1.1}"
-6c3bd801-103f-4d2b-889f-67e4df67a9a2,2024-02-13 22:35:15.306219+00,curse words,*(!&@#&)!,"{""defense"":-2}"
-9f3836e1-1093-42cc-b7ce-cd1de52cb965,2024-02-13 22:37:38.13793+00,pray,Gain some insight,"{""health"":10}"
-7548e656-72c4-491e-a361-e900d5695825,2024-02-13 22:38:37.592121+00,shower,Wash away all the sickness,"{""health"":5,""removes"":""poop""}"
-07ff709f-1cc3-47a3-b6c5-da87ff0e0d29,2024-02-13 22:39:47.305641+00,work out,Get those gains,"{""attack"":30}"
-636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,light choking,Sometimes its all you need,"{""attack"":1.2}"
-ba78eea0-c9fc-4632-bb2a-3b08075a27b6,2024-02-13 22:42:34.3371+00,go to the bodega,Who knows what you'll find?,"{}"
+id,created_at,name,description,metadata,type
+1b8f49e7-c528-4710-a782-ab6fe4b3df61,2024-02-13 22:24:11.412419+00,throw poop,Ewwww,"{""attack"":1.1,""cleanliness"":-2}",weak
+07ff709f-1cc3-47a3-b6c5-da87ff0e0d29,2024-02-13 22:39:47.305641+00,end,It's over,"{""attack"":30}",strong
+21e28c52-8622-40ff-9256-dba4f0d7af55,2024-02-13 22:30:11.4715+00,all seeing eye,Illuminati confirmed,"{""health"":20}",special
+ba78eea0-c9fc-4632-bb2a-3b08075a27b6,2024-02-13 22:42:34.3371+00,go to the bodega,Who knows what you'll find?,{},special
+636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,light choking,Sometimes its all you need,"{""attack"":1.2}",weak
+82626e00-5416-4035-a7f0-b3980caed102,2024-02-13 22:26:30.504027+00,run away,If it works it works,"{""miss"":0.5}",special
+c6f111a1-7922-45b2-85e4-e67ea926a7a9,2024-02-13 22:27:43.319208+00,heal me,I feel better now 🙂,"{""health"":30}",special
+91ae0151-f956-44c2-986a-7f04086ae6dd,2024-02-13 22:31:26.456209+00,strong kick,Better than a weak kick,"{""attack"":2}",strong
+95f249a1-c0e0-48da-86ca-b1ad8a1681db,2024-02-13 22:32:11.277656+00,weak kick,A very weak kick,"{""miss"":0.2,""attack"":1.1}",weak
+6c3bd801-103f-4d2b-889f-67e4df67a9a2,2024-02-13 22:35:15.306219+00,curse words,*(!&@#&)!,"{""defense"":-2}",special
+9f3836e1-1093-42cc-b7ce-cd1de52cb965,2024-02-13 22:37:38.13793+00,pray,Gain some insight,"{""health"":10}",special
+7548e656-72c4-491e-a361-e900d5695825,2024-02-13 22:38:37.592121+00,shower,Wash away all the sickness,"{""health"":5,""removes"":""poop""}",special
+017a4af2-45ca-4a60-94c4-dbfc6b40351f,2025-03-07 00:37:26.822115+00,front hand,Opposite of back hand,"{""attack"":3}",strong
+97572e70-28e9-46ff-84f6-206e9521cf7f,2025-03-07 00:38:25.6109+00,back hand,Opposite of front hand,"{""attack"":3.5}",strong
+4d9029c1-927c-4c0c-b9a4-680bf61690c2,2025-03-07 00:43:00.060993+00,slap ass,"Good game, slap ass....",{},weak

@@ -41,6 +41,7 @@ export type Database = {
           id: string
           metadata: Json
           name: string
+          type: Database["public"]["Enums"]["ability_type"]
         }
         Insert: {
           created_at?: string
@@ -48,6 +49,7 @@ export type Database = {
           id?: string
           metadata?: Json
           name: string
+          type: Database["public"]["Enums"]["ability_type"]
         }
         Update: {
           created_at?: string
@@ -55,6 +57,7 @@ export type Database = {
           id?: string
           metadata?: Json
           name?: string
+          type?: Database["public"]["Enums"]["ability_type"]
         }
         Relationships: []
       }
@@ -402,6 +405,7 @@ export type Database = {
       }
     }
     Enums: {
+      ability_type: "weak" | "strong" | "special"
       action_type: "ability" | "item"
       item_type: "attack" | "defense" | "accessory" | "consumable"
     }
