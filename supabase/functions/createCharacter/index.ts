@@ -7,6 +7,7 @@ import {
   AbilityWithMetadata,
   CharacterWithAbilities,
 } from "../_shared/types.ts";
+import { Tables } from "../_shared/supabaseTypes.ts";
 
 // const supabase = generateSupabaseClient();
 
@@ -34,9 +35,14 @@ function pickStrongAbility(abilities: AbilityWithMetadata[]) {
 
 function pickWeakAbility(abilities: AbilityWithMetadata[]) {
   const weakAbilities = abilities.filter((ability) => ability.type === "weak");
-  console.log(weakAbilities);
   const randomIndex = generateRandomValue(0, weakAbilities.length - 1);
   return weakAbilities[randomIndex];
+}
+
+function pickArchetype(
+  archetypes: Tables<"archetypes">[],
+): Tables<"archetypes"> {
+  return archetypes[generateRandomValue(0, archetypes.length - 1)];
 }
 
 async function generateCharacterName(): Promise<string> {
@@ -61,7 +67,7 @@ Deno.serve(async (req) => {
     const [
       { count: charactersCount, error: charactersCountError },
       { data: abilities, error: abilitiesError },
-      { data: avatars, error: avatarsError },
+      { data: archetypes, error: archetypesError },
     ] = await Promise.all([
       supabase
         .from("characters")
@@ -69,29 +75,31 @@ Deno.serve(async (req) => {
         .eq("alive", true)
         .eq("user_id", userId),
       supabase.from("abilities").select("*").returns<AbilityWithMetadata[]>(),
-      supabase.storage.from("avatars").list(),
+      supabase.from("archetypes").select("*"),
     ]);
+
+    // const { name, avatar_filename: avatarFilename } = await pickArchetype();
 
     if (charactersCountError) throw charactersCountError;
     if (abilitiesError) throw abilitiesError;
-    if (avatarsError) throw avatarsError;
+    if (archetypesError) throw archetypesError;
 
     if (charactersCount! > 0) {
       throw Error("You cannot have more than one character alive");
     }
 
     const health = generateRandomValue(75, 125);
-    const avatarUrlIndex = generateRandomValue(0, avatars.length - 1);
-    const avatarFilename = avatars[avatarUrlIndex].name;
-    const {
-      data: { publicUrl: avatarUrl },
-    } = supabase.storage
-      .from("avatars")
-      .getPublicUrl(avatarFilename);
 
     const ability1 = pickWeakAbility(abilities);
     const ability2 = pickStrongAbility(abilities);
     const ability3 = pickSpecialAbility(abilities);
+    const { name, avatar_filename } = pickArchetype(archetypes);
+
+    const {
+      data: { publicUrl: avatarUrl },
+    } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(avatar_filename);
 
     const { data: newCharacterData, error: characterInsertError } =
       await supabase
@@ -110,7 +118,7 @@ Deno.serve(async (req) => {
             Deno.env.get("SUPABASE_URL")!,
             "",
           ),
-          name: await generateCharacterName(),
+          name,
         })
         .select(
           "*",

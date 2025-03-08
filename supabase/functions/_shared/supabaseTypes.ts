@@ -95,16 +95,19 @@ export type Database = {
       }
       archetypes: {
         Row: {
+          avatar_filename: string
           created_at: string
           id: number
           name: string
         }
         Insert: {
+          avatar_filename: string
           created_at?: string
           id?: number
           name: string
         }
         Update: {
+          avatar_filename?: string
           created_at?: string
           id?: number
           name?: string
