@@ -106,12 +106,6 @@ Deno.serve(async (req) => {
           ability_2_id: ability2.id,
           ability_3_id: ability3.id,
           // on development SUPABASE_URL is set to http://kong:8000 which is the url to talk to docker
-          avatar_url: Deno.env.get("DENO_ENV") == "development"
-            ? avatarUrl.replace(
-              Deno.env.get("SUPABASE_URL")!,
-              Deno.env.get("LOCAL_BUCKET_URL")!,
-            )
-            : avatarUrl,
           avatar_path: avatarUrl.replace(
             Deno.env.get("SUPABASE_URL")!,
             "",

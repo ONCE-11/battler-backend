@@ -121,7 +121,6 @@ export type Database = {
           attack: number
           attack_item_id: string | null
           avatar_path: string
-          avatar_url: string
           consumable_id: string | null
           created_at: string
           current_health: number
@@ -142,7 +141,6 @@ export type Database = {
           attack: number
           attack_item_id?: string | null
           avatar_path: string
-          avatar_url: string
           consumable_id?: string | null
           created_at?: string
           current_health: number
@@ -163,7 +161,6 @@ export type Database = {
           attack?: number
           attack_item_id?: string | null
           avatar_path?: string
-          avatar_url?: string
           consumable_id?: string | null
           created_at?: string
           current_health?: number
