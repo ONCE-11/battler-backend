@@ -45,17 +45,6 @@ function pickArchetype(
   return archetypes[generateRandomValue(0, archetypes.length - 1)];
 }
 
-async function generateCharacterName(): Promise<string> {
-  const { data: archetypes, error } = await supabase.from("archetypes").select(
-    "*",
-  );
-  if (error) throw error;
-
-  const { name } = archetypes[generateRandomValue(0, archetypes.length - 1)];
-
-  return name;
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return preflightResponse();
