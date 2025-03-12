@@ -1,20 +1,49 @@
-id,created_at,name,description,metadata,type
-21e28c52-8622-40ff-9256-dba4f0d7af55,2024-02-13 22:30:11.4715+00,see beyond,Gain some intel,"{""health"":20}",special
-ba78eea0-c9fc-4632-bb2a-3b08075a27b6,2024-02-13 22:42:34.3371+00,meditate,Inner sight,"{""attack"":1.1,""health"":25}",special
-82626e00-5416-4035-a7f0-b3980caed102,2024-02-13 22:26:30.504027+00,dip,I'm out,"{""dip"":0.5}",special
-07ff709f-1cc3-47a3-b6c5-da87ff0e0d29,2024-02-13 22:39:47.305641+00,merc,It's over,"{""death"":0.1,""attack"":20}",strong
-88772150-e5e8-4376-8653-c8fa286f3190,2025-03-10 22:36:18.300469+00,throat punch,GOD DAMN,"{""attack"":15}",strong
-c6f111a1-7922-45b2-85e4-e67ea926a7a9,2024-02-13 22:27:43.319208+00,heal me,I feel better now 🙂,"{""health"":30}",special
-97572e70-28e9-46ff-84f6-206e9521cf7f,2025-03-07 00:38:25.6109+00,back hand,Opposite of front hand,"{""attack"":12}",strong
-017a4af2-45ca-4a60-94c4-dbfc6b40351f,2025-03-07 00:37:26.822115+00,front hand,Opposite of back hand,"{""attack"":13}",strong
-9f3836e1-1093-42cc-b7ce-cd1de52cb965,2024-02-13 22:37:38.13793+00,pray,Gain some insight,"{""health"":10}",special
-7548e656-72c4-491e-a361-e900d5695825,2024-02-13 22:38:37.592121+00,shower,Wash away all the sickness,"{""health"":5,""removes"":""poop""}",special
-3f176123-115e-408c-bdf3-5022253beda7,2025-03-10 22:37:16.914506+00,clobber,That f!*@#&' hurts,"{""attack"":18}",strong
-91ae0151-f956-44c2-986a-7f04086ae6dd,2024-02-13 22:31:26.456209+00,stomp,Catch them while their down,"{""attack"":10}",strong
-4d9029c1-927c-4c0c-b9a4-680bf61690c2,2025-03-07 00:43:00.060993+00,slap,What did the 5 fingers say to the face?,"{""attack"":7}",weak
-bf775aea-9cba-4e91-b161-8da5dacb0c87,2025-03-10 22:46:43.024517+00,chop,Looks can be deceiving,"{""skip"":0.4,""attack"":8}",weak
-636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,choke,Sometimes its all you need,"{""attack"":9}",weak
-02dea1ef-cd41-4459-b386-0aebdec7f59d,2025-03-10 22:45:33.008932+00,tickle,Hahahaha,"{""skip"":0.2,""attack"":3}",weak
-1b8f49e7-c528-4710-a782-ab6fe4b3df61,2024-02-13 22:24:11.412419+00,tap,Ayyyo,"{""attack"":3.5}",weak
-95f249a1-c0e0-48da-86ca-b1ad8a1681db,2024-02-13 22:32:11.277656+00,kick leg,It might hurt a lil,"{""miss"":0.2,""attack"":8}",weak
-6c3bd801-103f-4d2b-889f-67e4df67a9a2,2024-02-13 22:35:15.306219+00,curse out,*(!*@#&)!,"{""defense"":-2}",special
+name,description,metadata,id,created_at,type
+rezar,Gain some insight,"{""health"":10}",9f3836e1-1093-42cc-b7ce-cd1de52cb965,2024-02-13 22:37:38.13793+00,special
+see beyond,Gain some intel,"{""health"":20}",21e28c52-8622-40ff-9256-dba4f0d7af55,2024-02-13 22:30:11.4715+00,special
+perm,,"{""attack"":17}",5dce5615-2cbe-4cb9-8882-e9a8ee6fb8de,2025-03-12 21:20:55.592565+00,strong
+grab,Get over here!,"{""skip"":0.2,""attack"":3}",812d4ac9-b51d-488d-be70-e60d097948c6,2025-03-11 02:35:28.562798+00,weak
+heal,I feel better now 🙂,"{""health"":30}",c6f111a1-7922-45b2-85e4-e67ea926a7a9,2024-02-13 22:27:43.319208+00,special
+merc,It's over,"{""death"":0.1,""attack"":20}",07ff709f-1cc3-47a3-b6c5-da87ff0e0d29,2024-02-13 22:39:47.305641+00,strong
+drag,,"{""attack"":14}",fed756b2-f554-4ac1-badf-015c195857f4,2025-03-12 21:22:02.892366+00,strong
+back hand,Opposite of front hand,"{""attack"":12}",97572e70-28e9-46ff-84f6-206e9521cf7f,2025-03-07 00:38:25.6109+00,strong
+choke,Sometimes its all you need,"{""skip"":0.2,""attack"":9}",636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,weak
+front hand,Opposite of back hand,"{""attack"":13}",017a4af2-45ca-4a60-94c4-dbfc6b40351f,2025-03-07 00:37:26.822115+00,strong
+clobber,That f!*@#&' hurts,"{""attack"":18}",3f176123-115e-408c-bdf3-5022253beda7,2025-03-10 22:37:16.914506+00,strong
+stomp,Catch them while their down,"{""attack"":10}",91ae0151-f956-44c2-986a-7f04086ae6dd,2024-02-13 22:31:26.456209+00,strong
+tap,Ayyyo,"{""skip"":0.2,""attack"":3.5}",1b8f49e7-c528-4710-a782-ab6fe4b3df61,2024-02-13 22:24:11.412419+00,weak
+slap,What did the 5 fingers say to the face?,"{""skip"":0.2,""attack"":5}",4d9029c1-927c-4c0c-b9a4-680bf61690c2,2025-03-07 00:43:00.060993+00,weak
+chop,Looks can be deceiving,"{""skip"":0.4,""attack"":8}",bf775aea-9cba-4e91-b161-8da5dacb0c87,2025-03-10 22:46:43.024517+00,weak
+jab,,"{""skip"":0.2,""attack"":7}",e9dff6e6-e217-4315-8ca2-c4d80ab1e101,2025-03-12 20:07:08.261549+00,weak
+yell,AHHHHHHHHHHHHH,"{""strength"":3,""fail_chance"":0.6}",059295de-c150-45c6-b7fb-296121ce32ac,2025-03-11 02:38:00.356327+00,special
+tickle,Hahahaha,"{""skip"":0.2,""attack"":3}",02dea1ef-cd41-4459-b386-0aebdec7f59d,2025-03-10 22:45:33.008932+00,weak
+punch,,"{""skip"":0.2,""attack"":8}",35611e05-828a-44f7-844f-7d1c73745f4a,2025-03-12 20:41:18.885276+00,weak
+slick hair,,"{""health"":30,""strength"":1}",a158e560-df40-4396-89e8-fc78188311e2,2025-03-12 21:05:30.680913+00,special
+7 train swipe,Stand clear of closing doors,"{""skip"":0.2,""attack"":3}",21ce102e-6148-4a32-840e-6ff9939bc67e,2025-03-12 20:42:46.750375+00,weak
+meditate,Inner sight,"{""health"":25,""strength"":2}",ba78eea0-c9fc-4632-bb2a-3b08075a27b6,2024-02-13 22:42:34.3371+00,special
+golpecito,,"{""skip"":0.2,""attack"":3}",14e17d48-9a4c-4b3c-b53d-c341a94d21e9,2025-03-12 20:44:13.554166+00,weak
+smaaack,,"{""skip"":0.2,""attack"":8}",775ba5cf-cd09-44ae-b704-fadda1cd8dc4,2025-03-12 20:44:43.226079+00,weak
+smoke hookah,Pasame la hookah,"{""health"":-10,""strength"":2}",f3bebf56-dafb-43da-aa9f-582d3d238d4a,2025-03-12 21:02:28.694455+00,special
+press,,"{""skip"":0.2,""attack"":4}",9d97921d-0e0b-4524-8ef6-be7f8bc67a61,2025-03-12 20:45:20.249152+00,weak
+chop it up,Make amends,"{""heal"":10,""end_beef"":0.5}",47fb7282-8cde-4bab-9ce9-b2e39b379b01,2025-03-11 00:01:55.058052+00,special
+dip,I'm out,"{""end_beef"":1}",82626e00-5416-4035-a7f0-b3980caed102,2024-02-13 22:26:30.504027+00,special
+throat punch,GOT DAMN,"{""attack"":15}",88772150-e5e8-4376-8653-c8fa286f3190,2025-03-10 22:36:18.300469+00,strong
+curse out,*(!*@#&)!,"{""defense"":-2}",6c3bd801-103f-4d2b-889f-67e4df67a9a2,2024-02-13 22:35:15.306219+00,special
+comb hair,Ya tu save,"{""heal"":15}",5f36d223-e19e-4f4b-b465-ac8fffed8a73,2025-03-11 00:06:57.73077+00,special
+time out,Ding ding,"{""heal"":20,""heal_opp"":5}",eeac3221-85db-4203-bd13-28d15e7a3d67,2025-03-11 02:31:24.273795+00,special
+tackle,Arrggghhhh,"{""skip"":0.3,""attack"":10}",48f940a4-8e00-48e4-8ecf-cfa1ad884cb4,2025-03-11 02:33:37.559441+00,special
+paliza,Te jodiste,"{""attack"":17}",3f557865-e62b-433c-8483-25df8e2a6357,2025-03-12 20:59:20.082731+00,strong
+forward stance,,"{""power"":1.5}",8067ae15-8a8b-4b41-96f8-46cda0223a48,2025-03-11 02:46:20.763073+00,special
+cat stance,,"{""defense"":1.5}",d41ca14b-f200-4795-bb84-9cff4512862a,2025-03-11 02:41:52.477119+00,special
+uppercut,,"{""attack"":15}",e16d88fc-f417-4333-af1f-c9ee3a3ecf69,2025-03-12 20:47:45.225998+00,strong
+golpiza,Ratatatata,"{""attack"":17}",eff8bce0-2b7a-42bf-a1be-3246b36e044f,2025-03-12 20:59:33.090957+00,strong
+front kick,Kiyyaah b*@#&h,"{""attack"":18}",05272286-9e51-4e23-82be-084cc98851bb,2025-03-12 20:55:40.301012+00,strong
+roundhouse kick,Yatatatata,"{""attack"":19}",4789a86a-9ddf-46a5-a7eb-9ff287212b61,2025-03-12 20:46:15.786456+00,strong
+sacrifice,,"{""attack"":14}",e4d7e4bd-1e99-4d83-b567-846b31b547b2,2025-03-12 20:58:04.65453+00,strong
+slam,,"{""attack"":16}",71cb611e-9d27-48f8-a8fc-6cd26745c8e8,2025-03-12 20:58:27.77328+00,strong
+flushing fury,,"{""attack"":13}",2686f712-9e78-4a89-9c4f-cd512e7e4c6d,2025-03-12 20:58:51.018239+00,strong
+rest,I feel refreshed,"{""health"":25}",8c8ca0f1-4470-49ea-b9b0-7420d3b0d8a2,2025-03-12 21:00:37.261341+00,special
+amazin' finish,Let's go Mets!,"{""attack"":25}",65bbfccf-7946-4dba-b833-1fe5a9b81d1f,2025-03-12 21:01:28.749952+00,special
+picante,"Ayyy, caliente!","{""health"":-20,""strength"":4}",46b4d259-36b7-4cd5-8445-5494d834dc2f,2025-03-12 21:03:25.335215+00,special
+kick leg,This might hurt a lil,"{""miss"":0.2,""skip"":0.2,""attack"":8}",95f249a1-c0e0-48da-86ca-b1ad8a1681db,2024-02-13 22:32:11.277656+00,weak
+divination,May the spirits have mercy,"{""skip"":0.2,""attack"":5}",5d11f5d7-6f73-4678-a2fb-93d7bc405e8b,2025-03-12 20:41:51.190953+00,weak
