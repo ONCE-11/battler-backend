@@ -7,11 +7,11 @@ heal,I feel better now 🙂,"{""health"":30}",c6f111a1-7922-45b2-85e4-e67ea926a7
 merc,It's over,"{""death"":0.1,""attack"":20}",07ff709f-1cc3-47a3-b6c5-da87ff0e0d29,2024-02-13 22:39:47.305641+00,strong
 drag,,"{""attack"":14}",fed756b2-f554-4ac1-badf-015c195857f4,2025-03-12 21:22:02.892366+00,strong
 back hand,Opposite of front hand,"{""attack"":12}",97572e70-28e9-46ff-84f6-206e9521cf7f,2025-03-07 00:38:25.6109+00,strong
-choke,Sometimes its all you need,"{""skip"":0.2,""attack"":9}",636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,weak
 front hand,Opposite of back hand,"{""attack"":13}",017a4af2-45ca-4a60-94c4-dbfc6b40351f,2025-03-07 00:37:26.822115+00,strong
 clobber,That f!*@#&' hurts,"{""attack"":18}",3f176123-115e-408c-bdf3-5022253beda7,2025-03-10 22:37:16.914506+00,strong
 stomp,Catch them while their down,"{""attack"":10}",91ae0151-f956-44c2-986a-7f04086ae6dd,2024-02-13 22:31:26.456209+00,strong
 tap,Ayyyo,"{""skip"":0.2,""attack"":3.5}",1b8f49e7-c528-4710-a782-ab6fe4b3df61,2024-02-13 22:24:11.412419+00,weak
+choke,Sometimes its all you need,"{""attack"":14}",636dc577-5a83-4a86-8f1a-b8dfff497b0d,2024-02-13 22:41:09.114845+00,strong
 slap,What did the 5 fingers say to the face?,"{""skip"":0.2,""attack"":5}",4d9029c1-927c-4c0c-b9a4-680bf61690c2,2025-03-07 00:43:00.060993+00,weak
 chop,Looks can be deceiving,"{""skip"":0.4,""attack"":8}",bf775aea-9cba-4e91-b161-8da5dacb0c87,2025-03-10 22:46:43.024517+00,weak
 jab,,"{""skip"":0.2,""attack"":7}",e9dff6e6-e217-4315-8ca2-c4d80ab1e101,2025-03-12 20:07:08.261549+00,weak

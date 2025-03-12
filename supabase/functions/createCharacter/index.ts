@@ -17,32 +17,21 @@ function generateRandomValue(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function pickSpecialAbility(abilities: AbilityWithMetadata[]) {
-  const specialAbilities = abilities.filter((ability) =>
-    ability.type === "special"
-  );
-  const randomIndex = generateRandomValue(0, specialAbilities.length - 1);
-  return specialAbilities[randomIndex];
-}
-
-function pickStrongAbility(abilities: AbilityWithMetadata[]) {
-  const strongAbilities = abilities.filter((ability) =>
-    ability.type === "strong"
-  );
-  const randomIndex = generateRandomValue(0, strongAbilities.length - 1);
-  return strongAbilities[randomIndex];
-}
-
-function pickWeakAbility(abilities: AbilityWithMetadata[]) {
-  const weakAbilities = abilities.filter((ability) => ability.type === "weak");
-  const randomIndex = generateRandomValue(0, weakAbilities.length - 1);
-  return weakAbilities[randomIndex];
-}
-
 function pickArchetype(
   archetypes: Tables<"archetypes">[],
 ): Tables<"archetypes"> {
   return archetypes[generateRandomValue(0, archetypes.length - 1)];
+}
+
+function searchAbilities(
+  abilites: AbilityWithMetadata[],
+  ability_id: Tables<"abilities">["id"],
+) {
+  const ability = abilites.find((ability) => ability.id === ability_id);
+
+  if (!ability) throw new Error("Ability not found in abilities list");
+
+  return ability;
 }
 
 Deno.serve(async (req) => {
@@ -67,8 +56,6 @@ Deno.serve(async (req) => {
       supabase.from("archetypes").select("*"),
     ]);
 
-    // const { name, avatar_filename: avatarFilename } = await pickArchetype();
-
     if (charactersCountError) throw charactersCountError;
     if (abilitiesError) throw abilitiesError;
     if (archetypesError) throw archetypesError;
@@ -77,12 +64,20 @@ Deno.serve(async (req) => {
       throw Error("You cannot have more than one character alive");
     }
 
-    const health = generateRandomValue(75, 125);
+    const {
+      name,
+      avatar_filename,
+      strength,
+      defense,
+      health,
+      weak_ability_id,
+      strong_ability_id,
+      special_ability_id,
+    } = pickArchetype(archetypes);
 
-    const ability1 = pickWeakAbility(abilities);
-    const ability2 = pickStrongAbility(abilities);
-    const ability3 = pickSpecialAbility(abilities);
-    const { name, avatar_filename } = pickArchetype(archetypes);
+    const ability1 = searchAbilities(abilities, weak_ability_id);
+    const ability2 = searchAbilities(abilities, strong_ability_id);
+    const ability3 = searchAbilities(abilities, special_ability_id);
 
     const {
       data: { publicUrl: avatarUrl },
@@ -94,14 +89,14 @@ Deno.serve(async (req) => {
       await supabase
         .from("characters")
         .insert({
-          attack: generateRandomValue(1, 10),
-          defense: generateRandomValue(1, 10),
+          attack: strength,
+          defense: defense,
           max_health: health,
           current_health: health,
           user_id: userId,
-          ability_1_id: ability1.id,
-          ability_2_id: ability2.id,
-          ability_3_id: ability3.id,
+          ability_1_id: weak_ability_id,
+          ability_2_id: strong_ability_id,
+          ability_3_id: special_ability_id,
           // on development SUPABASE_URL is set to http://kong:8000 which is the url to talk to docker
           avatar_path: avatarUrl.replace(
             Deno.env.get("SUPABASE_URL")!,

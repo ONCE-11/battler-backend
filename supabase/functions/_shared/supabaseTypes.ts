@@ -95,24 +95,70 @@ export type Database = {
       }
       archetypes: {
         Row: {
+          agility: number
           avatar_filename: string
           created_at: string
+          defense: number
+          health: number
           id: number
+          mental: number
           name: string
+          special_ability_id: string
+          strength: number
+          strong_ability_id: string
+          weak_ability_id: string
         }
         Insert: {
+          agility: number
           avatar_filename: string
           created_at?: string
+          defense: number
+          health: number
           id?: number
+          mental: number
           name: string
+          special_ability_id: string
+          strength: number
+          strong_ability_id: string
+          weak_ability_id: string
         }
         Update: {
+          agility?: number
           avatar_filename?: string
           created_at?: string
+          defense?: number
+          health?: number
           id?: number
+          mental?: number
           name?: string
+          special_ability_id?: string
+          strength?: number
+          strong_ability_id?: string
+          weak_ability_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "archetypes_special_ability_fkey"
+            columns: ["special_ability_id"]
+            isOneToOne: false
+            referencedRelation: "abilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "archetypes_strong_ability_fkey"
+            columns: ["strong_ability_id"]
+            isOneToOne: false
+            referencedRelation: "abilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "archetypes_weak_ability_fkey"
+            columns: ["weak_ability_id"]
+            isOneToOne: false
+            referencedRelation: "abilities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       characters: {
         Row: {
