@@ -9,7 +9,11 @@ import {
 } from "../_shared/types.ts";
 import { Tables } from "../_shared/supabaseTypes.ts";
 
-// const supabase = generateSupabaseClient();
+type ArchetypeWithAbilities = Tables<"archetypes"> & {
+  weak_ability: AbilityWithMetadata;
+  strong_ability: AbilityWithMetadata;
+  special_ability: AbilityWithMetadata;
+};
 
 function generateRandomValue(min: number, max: number) {
   min = Math.ceil(min);
@@ -18,20 +22,9 @@ function generateRandomValue(min: number, max: number) {
 }
 
 function pickArchetype(
-  archetypes: Tables<"archetypes">[],
-): Tables<"archetypes"> {
+  archetypes: ArchetypeWithAbilities[],
+): ArchetypeWithAbilities {
   return archetypes[generateRandomValue(0, archetypes.length - 1)];
-}
-
-function searchAbilities(
-  abilites: AbilityWithMetadata[],
-  ability_id: Tables<"abilities">["id"],
-) {
-  const ability = abilites.find((ability) => ability.id === ability_id);
-
-  if (!ability) throw new Error("Ability not found in abilities list");
-
-  return ability;
 }
 
 Deno.serve(async (req) => {
@@ -44,7 +37,6 @@ Deno.serve(async (req) => {
 
     const [
       { count: charactersCount, error: charactersCountError },
-      { data: abilities, error: abilitiesError },
       { data: archetypes, error: archetypesError },
     ] = await Promise.all([
       supabase
@@ -52,12 +44,12 @@ Deno.serve(async (req) => {
         .select("*", { count: "exact", head: true })
         .eq("alive", true)
         .eq("user_id", userId),
-      supabase.from("abilities").select("*").returns<AbilityWithMetadata[]>(),
-      supabase.from("archetypes").select("*"),
+      supabase.from("archetypes").select(
+        "*, weak_ability:weak_ability_id(*), strong_ability:strong_ability_id(*), special_ability:special_ability_id(*)",
+      ).returns<ArchetypeWithAbilities[]>(),
     ]);
 
     if (charactersCountError) throw charactersCountError;
-    if (abilitiesError) throw abilitiesError;
     if (archetypesError) throw archetypesError;
 
     if (charactersCount! > 0) {
@@ -73,11 +65,10 @@ Deno.serve(async (req) => {
       weak_ability_id,
       strong_ability_id,
       special_ability_id,
+      weak_ability,
+      strong_ability,
+      special_ability,
     } = pickArchetype(archetypes);
-
-    const ability1 = searchAbilities(abilities, weak_ability_id);
-    const ability2 = searchAbilities(abilities, strong_ability_id);
-    const ability3 = searchAbilities(abilities, special_ability_id);
 
     const {
       data: { publicUrl: avatarUrl },
@@ -109,13 +100,15 @@ Deno.serve(async (req) => {
         )
         .single();
 
+    console.log(newCharacterData);
+
     if (characterInsertError) throw characterInsertError;
 
     const response: CharacterWithAbilities = {
       ...newCharacterData,
-      ability1,
-      ability2,
-      ability3,
+      ability1: weak_ability,
+      ability2: strong_ability,
+      ability3: special_ability,
     };
 
     return functionResponse(response, 201);
