@@ -26,8 +26,8 @@ type FightWithPlayers = Tables<"fights"> & {
   player2: CharacterWithAbilities;
 };
 
-function attackMissed(missChance: number | undefined) {
-  return missChance === undefined ? false : Math.random() <= missChance;
+function rollChance(chance: number | undefined) {
+  return chance === undefined ? false : Math.random() <= chance;
 }
 
 Deno.serve(async (req) => {
@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
         "ability3"
       ];
 
-    // check if attack missed or
-    if (attackMissed(ability.metadata.miss)) {
+    // check if attack missed
+    if (rollChance(ability.metadata.miss)) {
       missed = true;
     } else if (ability.metadata.attack) {
       missed = false;
@@ -171,9 +171,9 @@ Deno.serve(async (req) => {
 
     const fightUpdatefields: FightUpdateFields = {
       game_over: gameOver,
-      current_turn_player_id: fight.turn % 2 === 0
-        ? fight.player1_id
-        : fight.player2_id,
+      current_turn_player_id: rollChance(ability.metadata.skip)
+        ? initiator.id
+        : receiver.id,
       turn: fight.turn + 1,
       winner_id: winnerId,
     };

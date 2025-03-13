@@ -6,6 +6,7 @@ type Metadata = {
     defense?: number;
     health?: number;
     miss?: number;
+    skip?: number;
   };
 };
 
