@@ -5,6 +5,7 @@ type Metadata = {
     attack?: number;
     defense?: number;
     health?: number;
+    miss?: number;
   };
 };
 

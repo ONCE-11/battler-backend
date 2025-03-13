@@ -1,7 +1,7 @@
 import {
   functionResponse,
-  generateSupabaseClient,
   preflightResponse,
+  supabase,
 } from "../_shared/utils.ts";
 
 Deno.serve(async (req) => {
@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
 
   try {
     const { characterId, userId, itemId } = await req.json();
-    const supabase = generateSupabaseClient();
 
     // load our most current data
     const [
@@ -61,6 +60,14 @@ Deno.serve(async (req) => {
 
     return functionResponse({ remainingPesos }, 200);
   } catch (error) {
-    return functionResponse({ error: error.message }, 500);
+    let message;
+
+    if (error instanceof Error) {
+      console.error(error);
+      message = error.message;
+    } else {
+      message = "Unknown error";
+    }
+    return functionResponse({ successful: false, error: message }, 500);
   }
 });

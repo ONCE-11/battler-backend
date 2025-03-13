@@ -26,6 +26,10 @@ type FightWithPlayers = Tables<"fights"> & {
   player2: CharacterWithAbilities;
 };
 
+function attackMissed(missChance: number | undefined) {
+  return missChance === undefined ? false : Math.random() <= missChance;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return preflightResponse();
@@ -60,6 +64,8 @@ Deno.serve(async (req) => {
 
     console.log({ fight });
 
+    let missed;
+
     if (reqParams.initiatorId === fight.player1_id) {
       initiator = fight.player1;
       receiver = fight.player2;
@@ -79,9 +85,12 @@ Deno.serve(async (req) => {
         "ability3"
       ];
 
-    console.log({ ability });
+    // check if attack missed or
+    if (attackMissed(ability.metadata.miss)) {
+      missed = true;
+    } else if (ability.metadata.attack) {
+      missed = false;
 
-    if (ability.metadata.attack) {
       // health should not exceed max health
       receiver.current_health = Math.max(
         0,
@@ -134,6 +143,8 @@ Deno.serve(async (req) => {
       if (playerUpdateError) throw createPGError(playerUpdateError);
     }
 
+    // TODO: account for the situation where initiator may kills themselves
+    //  using a skill that hurts them as well
     if (receiver.current_health === 0) {
       winnerId = initiator.id;
       receiver.alive = false;
@@ -210,6 +221,7 @@ Deno.serve(async (req) => {
           player_1: player1,
           player_2: player2,
           winner_id: winnerId,
+          missed,
         },
       },
     );
